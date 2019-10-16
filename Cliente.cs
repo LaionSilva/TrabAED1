@@ -20,7 +20,7 @@ namespace logistica {
     public int Ofertar(List<Produto> estoque) { //  Oferecer produtos ao cliente, podendo ele comprar ou não. Add in pedidos
       try{
         Random rand = new Random();
-        if (rand.Next(1,100) <= tendencia) {
+        if ((rand.Next(1,100) <= tendencia) && (estoque.Count > 0)) {
           int index = rand.Next(0, estoque.Count - 1);
           int quant = rand.Next(1, 50);
           pedidos.Add(new Produto(estoque[index].getTipo(), quant, estoque[index].getCusto()));
@@ -38,7 +38,7 @@ namespace logistica {
           bool run;
           do{
             run = false;
-            for(int i = 0; i < pedidos.Count; i++) {
+            for(int i = 0; i < pedidos.Count; i++) { //  Registrar pedidos
               if((pedidos[i].getTipo() == e.getTipo()) && (pedidos[i].getQuantidade() <= e.getQuantidade())) {
                 pacote.Add( new Produto(pedidos[i].getTipo(), pedidos[i].getQuantidade(), pedidos[i].getCusto()) );
                 e.downQuant( pedidos[i].getQuantidade() );
@@ -50,19 +50,24 @@ namespace logistica {
             }
           } while(run);
         }
-        if(venda) { Console.WriteLine("Cliente: {0} comprou", nome); }
+        if(venda) { Console.WriteLine("Pedido aceito. Cliente: {0}", nome); }
         else { Console.WriteLine("Produto não encontrado ou em falta ao vender: cli-ven"); }
       }
       return pacote;
     }
 
-    public bool checkPedidos(){
+    public bool checkPedidos(){ //  Verificar se existe pedidos pendentes
       if(pedidos.Count > 0) { return true; }
       return false;
     }
 
     public string getNome() { return nome; }
     public double[] getCoord() { return coord; }
+    public object[] getDados() { //  Get usado pela classe Save()
+      object[] dados = new object[5] {id, nome, coord[0], coord[1], tendencia};
+      return dados;
+    }
+
 
   }
 }

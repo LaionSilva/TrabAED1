@@ -38,6 +38,20 @@ namespace logistica {
       cliente = c;
       frete = f;
     }
+    // GETS
+    public int getId() { return id; }
+    public List<Produto> getPacote() { return pacote; }
+    public double getPreco() { return preco; }
+    public Destino getIdCliente() { return cliente;}
+    public double getFrete() { return frete; }
+    public int getPrazo() { return prazo; }
+    public Data getDataCompra() { return dataCompra; }
+    public Data getDataEntrega() { return dataEntrega; }
+    public bool getStatusPedido() { return statusPedido; }
+    public bool getStatusEntrega() { return statuaEntrega; }
+
+    //SETS
+    
   }
 
   public class Destino {
@@ -57,16 +71,17 @@ namespace logistica {
     public double getLat() { return lat; }
     public double getLon() { return lon; }
     public double getDistancia() { return distancia; }
+    public void setDistancia(double d) { distancia = d; }
   }
 
   public class Relatorio {
     private string id;
-    private List<Encomenda> encomenda = new List<Encomenda>();
+    private List<Encomenda> encomendas = new List<Encomenda>();
+    private List<Produto> produtos = new List<Produto>();
     private Data dataCompra;
     private int prazo; //  dias
     private Data dataEntrega;
-    private string nomeCliente;
-    private double[] destino = new double[2];
+    private Destino cliente;
     private int status; //  0 a 3 (cancelado, atrazado, entregue)
   }
 
