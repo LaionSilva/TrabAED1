@@ -9,19 +9,20 @@ namespace logistica {
     private List<Produto> pedidos = new List<Produto>();
     private int tendencia; //  chance de comprar 1 a 100
 
-    public Cliente(int i, string n, double lat, double lon) {
+    public Cliente(){}
+    public Cliente(int i, string n, double lat, double lon, int t = 50) {
       id = i;
       nome = n;
       coord[0] = lat;
       coord[1] = lon;
-      tendencia = 50;
+      tendencia = t;
     }
 
     public int Ofertar(List<Produto> estoque) { //  Oferecer produtos ao cliente, podendo ele comprar ou não. Add in pedidos
       try{
         Random rand = new Random();
         if ((rand.Next(1,100) <= tendencia) && (estoque.Count > 0)) {
-          int index = rand.Next(0, estoque.Count - 1);
+          int index = rand.Next(0, estoque.Count);
           int quant = rand.Next(1, 50);
           pedidos.Add(new Produto(estoque[index].getTipo(), quant, estoque[index].getCusto()));
           return 2;
@@ -46,12 +47,13 @@ namespace logistica {
                 i--;
                 run = true;
                 venda = true;
-              }
+              } 
+              else if(pedidos[i].getTipo() == e.getTipo()) 
+                { Console.WriteLine("Produto não encontrado ou em falta ao vender: {0} - {1} - cli-ven", e.getTipo(), e.getQuantidade()); }
             }
           } while(run);
         }
         if(venda) { Console.WriteLine("Pedido aceito. Cliente: {0}", nome); }
-        else { Console.WriteLine("Produto não encontrado ou em falta ao vender: cli-ven"); }
       }
       return pacote;
     }
@@ -61,13 +63,13 @@ namespace logistica {
       return false;
     }
 
+    public int getId() { return id; }
     public string getNome() { return nome; }
     public double[] getCoord() { return coord; }
-    public object[] getDados() { //  Get usado pela classe Save()
-      object[] dados = new object[5] {id, nome, coord[0], coord[1], tendencia};
-      return dados;
-    }
+    public int getTendencia() { return tendencia; }
+    public List<Produto> getPedidos() { return pedidos; }
 
+    public void setPedidos(List<Produto> p) { pedidos.AddRange(p); }
 
   }
 }

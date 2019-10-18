@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace logistica {
-  public class Produto{
+  public class Produto{ //  FIXO
     private string tipo;
     private int quantidade;
     private double custo; //  Valor que a distribuidora gastou para comprar
@@ -18,13 +18,15 @@ namespace logistica {
     public double getCusto() { return custo; }
 
     public void downQuant(int q) { quantidade -= q; }
+    public void upQuant(int q) { quantidade += q; }
   }
 
-  public class Encomenda {
+
+  public class Encomenda { //  FIXO
     private int id;
     private List<Produto> pacote = new List<Produto>();
     private double preco;
-    private Destino cliente; //  id do cliente
+    public Destino cliente; //  id do cliente
     private double frete;
     private int prazo; //  dias
     private Data dataCompra;
@@ -42,7 +44,6 @@ namespace logistica {
     public int getId() { return id; }
     public List<Produto> getPacote() { return pacote; }
     public double getPreco() { return preco; }
-    public Destino getIdCliente() { return cliente;}
     public double getFrete() { return frete; }
     public int getPrazo() { return prazo; }
     public Data getDataCompra() { return dataCompra; }
@@ -51,10 +52,10 @@ namespace logistica {
     public bool getStatusEntrega() { return statuaEntrega; }
 
     //SETS
-    
   }
 
-  public class Destino {
+
+  public class Destino { 
     private string nome;
     private double lat;
     private double lon;
@@ -74,6 +75,7 @@ namespace logistica {
     public void setDistancia(double d) { distancia = d; }
   }
 
+
   public class Relatorio {
     private string id;
     private List<Encomenda> encomendas = new List<Encomenda>();
@@ -84,6 +86,7 @@ namespace logistica {
     private Destino cliente;
     private int status; //  0 a 3 (cancelado, atrazado, entregue)
   }
+
 
   public class Data {
     private int tempo;
@@ -105,4 +108,5 @@ namespace logistica {
     }
     
   }
+
 }

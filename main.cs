@@ -9,7 +9,10 @@ namespace logistica {
 
       Distribuidora mercado = new Distribuidora();
 
-      mercado.NovoCliente("Laion");
+      //mercado.NovoCliente("Laion1");
+      //mercado.NovoCliente("Laion2");
+      //mercado.NovoCliente("Laion3");      
+
       mercado.NovoCaminhao();
       mercado.Ofertar();
       mercado.Vender();

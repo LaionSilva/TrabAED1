@@ -8,6 +8,7 @@ namespace logistica {
     private int capacidade;
     private double coefLucro;
     private double carteira; //  total de verbas
+    private bool CarteiraInf = true;
     private double combustivel;
     private List<Produto> produtos = new List<Produto>(); 
     private List<Encomenda> encomendas = new List<Encomenda>();
@@ -33,18 +34,32 @@ namespace logistica {
       file.setProdutos(produtos); 
       file.setClientes(clientes);
     }
+
     public void Carregar() { //  Carregar listas de dados.txt
-      produtos.AddRange(file.getProdutos()); 
-      clientes.AddRange(file.getClientes()); 
+      produtos = file.getProdutos(); 
+      clientes = file.getClientes(); 
     }
 
-    protected void InicializarProdutos() { 
-      //  Produto(tipo, quantidade, preço por unidade)
-      produtos.Add(new Produto("frutas", 100, 300.55));
+    public void NovoProduto(string tipo, double custo) { //  Produto(tipo, quantidade, preço por unidade)     
+      produtos.Add(new Produto(tipo, 0, custo));
+    }
 
-      produtos.Add(new Produto("eletrônicos", 100, 646.32));
-
-      produtos.Add(new Produto("katanas", 100, 14555.47));
+    public bool ComprarProduto(string tipo, int n) {
+      bool prod = false, renda = false;
+      foreach(Produto p in produtos){
+        if(tipo == p.getTipo()) {
+          if((carteira >= n * p.getCusto()) || CarteiraInf){
+            p.upQuant(n);
+            if(!CarteiraInf) { carteira -= n * p.getCusto(); }
+            renda = true;
+          } else { Console.WriteLine("Não há renda suficiente: dis-ComPro"); }       
+          prod = true;
+          break;             
+        }
+      }
+      if(renda && prod) { Console.WriteLine("Estoque reabastecido"); return true; }
+      else if (!prod) { Console.WriteLine("Produto não encontrado"); return false; }
+      else { return false; }
     }
     
     public void NovoCliente(string nome) { //  Cadastrar novo cliente para a distribuidora - localização aleatória
@@ -52,6 +67,7 @@ namespace logistica {
        clientes.Add( new Cliente(1, nome, rand.Next(-4000,4000) / 100, rand.Next(-8000,8000) / 100) );
        coord = clientes[getClientes(nome)].getCoord();
        Console.WriteLine("Novo cliente: {0} - lat: {1}, lon: {2}", nome, coord[0], coord[1]);
+       Salvar();
     }
 
     public void NovoCaminhao(double mc = 150, double kg = 3000, double ef = 10) { //  Comprar novo caminão
@@ -59,8 +75,6 @@ namespace logistica {
       frota.Add( new Caminhao(id, ef, mc, kg) );
       Console.WriteLine("Novo caminão: id: {0} - espaço: {1}m3 - carga máx: {2}kg - eficiência: {3}km/L", id, mc, kg, ef);
     }
-
-    private void Abastecer() {} //  TODO
 
     public void Ofertar() { //  Oferecer ao cliente os produtos
       bool compra = false;
@@ -71,7 +85,11 @@ namespace logistica {
         else if (oferta == 2) 
           { compra = true; }
       }
-      if(compra) { Console.WriteLine("Pedido realizado"); }
+      if(compra) { 
+        Console.WriteLine("Pedido realizado"); 
+        Salvar();
+      }
+      
     }
 
     public void Vender() { //  Aceitar pedidos realizados pelos clientes
@@ -88,7 +106,10 @@ namespace logistica {
           venda = true;
         }
       }
-      if(venda) { Console.WriteLine("Encomenda preparada"); }
+      if(venda) { 
+        Console.WriteLine("Encomenda preparada"); 
+        Salvar();
+      }
     }
 
     private bool DownEstoque(List<Produto> pacote) { // abater da Lista<produtos> o que foi vendido
@@ -110,15 +131,39 @@ namespace logistica {
       return -1;
     }
 
-
-    private void comoViajar(){ //favor dar um nome melhor pro metodo
+    
+    private void comoViajar(){ 
       List<int> rota = new List<int>();
-      if(true){
-        rota = menorRota();
+      List<int> caminhoesDisponiveis = new List<int>(); // lista com index dos caminhoes disponiveis da lista Frota 
+      for(int i=0; i<frota.Count; i++){
+          if(!frota[i].getViajando()){ // Verifica se caminhão esta no armazem
+            caminhoesDisponiveis.Add(i);
+          }
+        }
+
+      switch (caminhoesDisponiveis.Count){ // se a lista tem 0 elementos ele retorna 0 ou -1? | RESPOSTA: retorna 0
+      
+        case 0: //Não temos caminhoes disponiveis
+          Console.WriteLine("Não temos caminhões disponiveis");
+          break;
+        case 1: //LAION: quem é esse <encomenda> logo abaixo? | OBS: cada caminão pode levar mais de uma encomenda mas tem limite, e cada encomenda pertence a um unico cliente
+          if(  encomenda.prioridade == "LOW"){ // Todo: definir e criar prioridade. Estou chamando mas não existe 
+            rota = menorRota();
+          } else {
+            rota = menorPrazo();
+          }
+          break;
+        default: // 2 ou mais 
+          for(int i=0; i<encomendas.Count-1; i++){ // Verificar se existe encomendas com destinos próximos
+            for(int j=i+1; j<encomendas.Count; j++){
+              dis = calcularDistancia(encomendas[i].getLat(), encomendas[j].getLat(), encomendas[i].getLon(), encomendas[j].getLon());
+              if(dis<50){ // se a distancia entre o destino das encomendas for "pequena"
+                //Todo: guardar essa informação para ser usado depois
+              }
+            }
+          }
+          break;
       }
-
-
-
     }
 
     private List<int> menorPrazo() { // retorna uma lista crescente de prazos com os index da encomenda
@@ -138,7 +183,7 @@ namespace logistica {
         aux = auxPrazos[0];
         for(int i=1; i<auxPrazos.Count; i++){
           if(auxPrazos[i]<aux){ // se o prazo for menor guarda o valor
-            aux = auxPrazos[i]; 
+            aux = auxPrazos[i];
           }
         }
         rota.Add(prazos.IndexOf(aux)); // Adiciona o index do menor elemento de auxPrazos
@@ -152,9 +197,11 @@ namespace logistica {
       List<double> auxdistancia = new List<double>(); // aux para não alterar a lista distancia
       List<int> rota = new List<int>(); // Guarda o index das distancias. Obs: o index está ligado ao cliente.
       double aux;
+      double[] coordCli = new double[2];
       for(int i=0; i<clientes.Count; i++){ // Calcular a distancia do armazem até os clientes//Encomendas
-        aux = Math.Sqrt( Math.Pow(coord[0] - clientes[i].getLat(), 2) + Math.Pow(coord[1] - clientes[i].getLon(), 2));
-        clientes[i].setDistancia(aux);
+        coordCli = clientes[i].getCoord(); //  LAION: lembrese que o cliente não retorna lat e lon separadamente, ele devolve os dois juntos como um double[2]{lat, lon}
+        aux = calcularDistancia(coord[0], coordCli[0], coord[1], coordCli[1]);
+        clientes[i].setDistancia(aux); //  LAION: setDistancia??? cliente não possui atributo distancia e sim o objeto Destino() presente no objeto Encomenda()
         distancia.Add(aux);
       }
       auxdistancia = distancia; // Para não alterar a distancia
@@ -175,9 +222,10 @@ namespace logistica {
       return rota;
     } 
      
-    private void calcularDistancia(Cliente c){
-      
+    private double calcularDistancia(double lat1,double lon1, double lat2, double lon2){
+      res = Math.Sqrt( Math.Pow(lat1 - lat2, 2) + Math.Pow(lon1 - lon2, 2));
+      return res;
     }
-
+    */
   }
 }

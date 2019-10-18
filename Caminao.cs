@@ -32,11 +32,14 @@ namespace logistica {
     }
 
     public bool carregar(double mc, double kg){
-      if( (mc <= capacidade[0]) && (kg <= capacidade[1]) ){
-        return true;
-      }else{
-        return false;
+      if(!viajando){
+        if( (mc <= capacidade[0]) && (kg <= capacidade[1]) ){
+          return true;
+        }else{
+          return false;
+        }
       }
+      return false;
     }
 
     public bool Viajar(){
@@ -49,6 +52,9 @@ namespace logistica {
     public void setEficiencia(double ef){
       eficMotor = ef;
     }
- 
+
+    public bool getViajando(){
+      return viajando;
+    }
   }
 }
