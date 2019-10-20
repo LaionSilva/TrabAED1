@@ -21,7 +21,12 @@ namespace logistica {
       capacidadeTanque = 300.0;
       tanqueCombustivel = 0.0;
     }
-
+// ESTE METODO ESTOU USANDO
+    public double calcularDiariaMotorista(double distanciaTotal){
+      //pagar 100 reais a cada 1000 km
+      return (distanciaTotal/1000)*100;
+    }
+//
     public bool Abastecer(double q){
       if(q< capacidadeTanque - tanqueCombustivel){
         tanqueCombustivel+= q;
@@ -51,6 +56,11 @@ namespace logistica {
     //SETS
     public void setEficiencia(double ef){
       eficMotor = ef;
+    }
+
+    //Gets 
+    public double getEficiencia(){
+      return eficMotor;
     }
 
     public bool getViajando(){

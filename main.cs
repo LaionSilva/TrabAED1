@@ -15,7 +15,9 @@ namespace logistica {
           { Console.Write("{0} ", result[k, z]); }
         Console.WriteLine();
       } 
+      Console.WriteLine ("\nfim");
 */
+
 
       //mercado.NovoCliente("Laion1");
       //mercado.NovoCliente("Laion2");

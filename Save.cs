@@ -65,7 +65,7 @@ namespace logistica {
    
 
     private void Carregar(string dado){ //  Get do dados.txt para todas as listas
-      switch(dado){
+      switch(dado){        
         case "produtos": CarregarProdutos(); break;
         case "clientes": CarregarClientes(); break;
         case "encomendas": CarregarEncomendas(); break;
@@ -97,7 +97,13 @@ namespace logistica {
         using(StreamReader Carregar = new StreamReader(FileIn)){
           do{ lendo = Carregar.ReadLine();
             if(lendo == "--") {
-              produtos.Add( new Produto( Carregar.ReadLine(), int.Parse(Carregar.ReadLine()), double.Parse(Carregar.ReadLine()) ) );
+              produtos.Add( new Produto( 
+                Carregar.ReadLine(), 
+                int.Parse(Carregar.ReadLine()), 
+                double.Parse(Carregar.ReadLine()), 
+                double.Parse(Carregar.ReadLine()), 
+                double.Parse(Carregar.ReadLine()) 
+              ) );
               //Console.WriteLine(produtos.Count + lendo); //  TESTE
             } 
           } while (lendo != null); 
@@ -129,7 +135,13 @@ namespace logistica {
             } 
             if((lendo == "-#") && (gravar)) {
               while (lendo == "-#"){
-                pedidos.Add( new Produto( Carregar.ReadLine(), int.Parse(Carregar.ReadLine()), double.Parse(Carregar.ReadLine()) ) );
+                pedidos.Add( new Produto( 
+                  Carregar.ReadLine(), 
+                  int.Parse(Carregar.ReadLine()), 
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine()) 
+                ) );
                 lendo = Carregar.ReadLine();
               }    
               if(pedidos.Count > 0) 
@@ -169,10 +181,16 @@ namespace logistica {
               lendo = Carregar.ReadLine();
                      
               while (lendo == "-#"){
-                produtosEn.Add( new Produto(Carregar.ReadLine(), int.Parse(Carregar.ReadLine()), double.Parse(Carregar.ReadLine())) );  
+                produtosEn.Add( 
+                  new Produto(Carregar.ReadLine(), 
+                  int.Parse(Carregar.ReadLine()), 
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine())
+                ) );  
                 lendo = Carregar.ReadLine();
               }  
-              encomendas.Add( new Encomenda(id, produtosEn, cliente, 0, frete, data, preco) );
+              encomendas.Add( new Encomenda(id, produtosEn, cliente, 0, frete, prazo, data) );
             } 
             
           } while (lendo != null); 
@@ -190,6 +208,8 @@ namespace logistica {
           Salvar.WriteLine(p.getTipo()); 
           Salvar.WriteLine(p.getQuantidade()); 
           Salvar.WriteLine(p.getCusto()); 
+          Salvar.WriteLine(p.getPeso()); 
+          Salvar.WriteLine(p.getVolume()); 
         }
       }
     }
@@ -209,6 +229,8 @@ namespace logistica {
           Salvar.WriteLine(p.getTipo()); 
           Salvar.WriteLine(p.getQuantidade()); 
           Salvar.WriteLine(p.getCusto()); 
+          Salvar.WriteLine(p.getPeso()); 
+          Salvar.WriteLine(p.getVolume()); 
         }      
       }
     }
@@ -232,6 +254,8 @@ namespace logistica {
             Salvar.WriteLine(p.getTipo()); 
             Salvar.WriteLine(p.getQuantidade()); 
             Salvar.WriteLine(p.getCusto()); 
+            Salvar.WriteLine(p.getPeso()); 
+            Salvar.WriteLine(p.getVolume()); 
           }
         }
       }

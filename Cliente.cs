@@ -23,8 +23,14 @@ namespace logistica {
         Random rand = new Random();
         if ((rand.Next(1,100) <= tendencia) && (estoque.Count > 0)) {
           int index = rand.Next(0, estoque.Count);
-          int quant = rand.Next(1, 50);
-          pedidos.Add(new Produto(estoque[index].getTipo(), quant, estoque[index].getCusto()));
+          int quant = rand.Next(1, 10);
+          pedidos.Add(new Produto(
+            estoque[index].getTipo(), 
+            quant, 
+            estoque[index].getCusto(), 
+            estoque[index].getPeso(), 
+            estoque[index].getVolume()
+          ));
           return 2;
         }
       } catch { return 0; }
@@ -41,7 +47,13 @@ namespace logistica {
             run = false;
             for(int i = 0; i < pedidos.Count; i++) { //  Registrar pedidos
               if((pedidos[i].getTipo() == e.getTipo()) && (pedidos[i].getQuantidade() <= e.getQuantidade())) {
-                pacote.Add( new Produto(pedidos[i].getTipo(), pedidos[i].getQuantidade(), pedidos[i].getCusto()) );
+                pacote.Add( new Produto(
+                  pedidos[i].getTipo(), 
+                  pedidos[i].getQuantidade(), 
+                  pedidos[i].getCusto(),
+                  pedidos[i].getPeso(),
+                  pedidos[i].getVolume()
+                ) );
                 e.downQuant( pedidos[i].getQuantidade() );
                 pedidos.RemoveAt(i);
                 i--;

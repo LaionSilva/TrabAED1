@@ -6,16 +6,22 @@ namespace logistica {
     private string tipo;
     private int quantidade;
     private double custo; //  Valor que a distribuidora gastou para comprar
+    private double peso;
+    private double volume;
 
-    public Produto(string t, int q, double c) {
+    public Produto(string t, int q, double c, double p, double v) {
       tipo = t;
       quantidade = q;
       custo = c;
+      peso = p;
+      volume = v;
     }
 
     public string getTipo() { return tipo; }
     public int getQuantidade() { return quantidade; }
     public double getCusto() { return custo; }
+    public double getPeso() { return peso; }
+    public double getVolume() { return volume; }
 
     public void downQuant(int q) { quantidade -= q; }
     public void upQuant(int q) { quantidade += q; }
@@ -26,23 +32,23 @@ namespace logistica {
     private int id;
     private List<Produto> pacote = new List<Produto>();
     private double preco;
-    public string cliente; //  id do cliente
+    private string cliente; //  id do cliente
     private double frete;
     private int prazo; //  dias
     private string dataCompra;
     private bool statuaEntrega;
 
-    public Encomenda(int i, List<Produto> p, string c, double cl, double f = 0, string dc = "@", double pr = 0, bool s = false) { //  TODO: Controle de datas
+    public Encomenda(int i, List<Produto> p, string c, double cl, double f = 0, int pr = 0, string dc = "@", bool s = false) { //  TODO: Controle de datas
       id = i;
       pacote = p;
       cliente = c;
       frete = f;
+      prazo = pr;
       double valor = 0;
       foreach(Produto pac in p){
-        valor += pac.getCusto() * pac.getQuantidade();
+        valor += pac.getCusto() * pac.getQuantidade() * (1 + cl);
       }
-      if(pr == 0) { preco = valor * (1 + cl); } 
-      else { preco = pr; }
+      preco = valor;
       if(dc == "@") { dataCompra = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"); }
       else { dataCompra = dc; }
       statuaEntrega = s;
@@ -56,13 +62,25 @@ namespace logistica {
     public int getPrazo() { return prazo; }
     public string getDataCompra() { return dataCompra; }
     public bool getStatusEntrega() { return statuaEntrega; }
+    public double getPeso() { 
+      double peso = 0;
+      foreach(Produto pac in pacote)
+        { peso += pac.getPeso(); }
+      return peso; 
+    }
+    public double getVolume() { 
+      double volume = 0;
+      foreach(Produto pac in pacote)
+        { volume += pac.getVolume(); }
+      return volume; 
+    }
 
     //SETS
     public void setStatusEntrega(bool s) { statuaEntrega = s; }
   }
 
 
-  public class Destino { 
+  public class Destino { //  DELETAR
     private string nome;
     private double lat;
     private double lon;
