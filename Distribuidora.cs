@@ -16,6 +16,7 @@ namespace logistica {
     private List<Caminhao> frota = new List<Caminhao>(); 
 	  private List<Cliente> clientes = new List<Cliente>(); 
     public Save file = new Save();
+    public Rota rota = new Rota();
     
     public Distribuidora(double lat = 0, double lon = 0, int i = 10000, double c = 0, double l = 0.4) {
       coord[0] = lat;
@@ -33,15 +34,18 @@ namespace logistica {
     public void Salvar() { //  Guardar listas em dados.txt
       file.setProdutos(produtos); 
       file.setClientes(clientes);
+      file.setEncomendas(encomendas);
     }
 
     public void Carregar() { //  Carregar listas de dados.txt
       produtos = file.getProdutos(); 
       clientes = file.getClientes(); 
+      encomendas = file.getEncomendas(); 
     }
 
     public void NovoProduto(string tipo, double custo) { //  Produto(tipo, quantidade, preço por unidade)     
       produtos.Add(new Produto(tipo, 0, custo));
+      Salvar();
     }
 
     public bool ComprarProduto(string tipo, int n) {
@@ -57,7 +61,10 @@ namespace logistica {
           break;             
         }
       }
-      if(renda && prod) { Console.WriteLine("Estoque reabastecido"); return true; }
+      if(renda && prod) { 
+        Console.WriteLine("Estoque reabastecido"); return true; 
+        Salvar();
+      }
       else if (!prod) { Console.WriteLine("Produto não encontrado"); return false; }
       else { return false; }
     }
@@ -96,12 +103,12 @@ namespace logistica {
       List<Produto> pacote = new List<Produto>();
       bool venda = false;
       foreach(Cliente c in clientes) {
+        bool atualizar = false;
         pacote = c.Vender(produtos);
         if(pacote.Count > 0) {
           double[] coord = new double[2];
           coord = c.getCoord();
-          Destino destino = new Destino(c.getNome(), coord[0], coord[1], 0);
-          encomendas.Add( new Encomenda(1, pacote, destino, 0) );
+          encomendas.Add( new Encomenda(1, pacote, c.getNome(), coefLucro, 0) );  
           DownEstoque(pacote); // abater da Lista<produtos> o que foi vendido
           venda = true;
         }
@@ -120,6 +127,7 @@ namespace logistica {
               { e.downQuant( pacote[i].getQuantidade() ); }
           }
         }
+        Salvar();
       } catch { return false; }
       return true;
     }
@@ -131,7 +139,7 @@ namespace logistica {
       return -1;
     }
 
-    
+    /*
     private void comoViajar(){ 
       List<int> rota = new List<int>();
       List<int> caminhoesDisponiveis = new List<int>(); // lista com index dos caminhoes disponiveis da lista Frota 
@@ -141,7 +149,7 @@ namespace logistica {
           }
         }
 
-      switch (caminhoesDisponiveis.Count){ // se a lista tem 0 elementos ele retorna 0 ou -1? | RESPOSTA: retorna 0
+      switch (caminhoesDisponiveis.Count){
       
         case 0: //Não temos caminhoes disponiveis
           Console.WriteLine("Não temos caminhões disponiveis");

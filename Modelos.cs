@@ -26,32 +26,39 @@ namespace logistica {
     private int id;
     private List<Produto> pacote = new List<Produto>();
     private double preco;
-    public Destino cliente; //  id do cliente
+    public string cliente; //  id do cliente
     private double frete;
     private int prazo; //  dias
-    private Data dataCompra;
-    private Data dataEntrega;
-    private bool statusPedido;
+    private string dataCompra;
     private bool statuaEntrega;
 
-    public Encomenda(int i, List<Produto> p, Destino c, double f = 0) { //  TODO: Controle de datas
+    public Encomenda(int i, List<Produto> p, string c, double cl, double f = 0, string dc = "@", double pr = 0, bool s = false) { //  TODO: Controle de datas
       id = i;
       pacote = p;
       cliente = c;
       frete = f;
+      double valor = 0;
+      foreach(Produto pac in p){
+        valor += pac.getCusto() * pac.getQuantidade();
+      }
+      if(pr == 0) { preco = valor * (1 + cl); } 
+      else { preco = pr; }
+      if(dc == "@") { dataCompra = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"); }
+      else { dataCompra = dc; }
+      statuaEntrega = s;
     }
     // GETS
     public int getId() { return id; }
     public List<Produto> getPacote() { return pacote; }
     public double getPreco() { return preco; }
+    public string getCliente() { return cliente; }
     public double getFrete() { return frete; }
     public int getPrazo() { return prazo; }
-    public Data getDataCompra() { return dataCompra; }
-    public Data getDataEntrega() { return dataEntrega; }
-    public bool getStatusPedido() { return statusPedido; }
+    public string getDataCompra() { return dataCompra; }
     public bool getStatusEntrega() { return statuaEntrega; }
 
     //SETS
+    public void setStatusEntrega(bool s) { statuaEntrega = s; }
   }
 
 
