@@ -65,13 +65,13 @@ namespace logistica {
     public double getPeso() { 
       double peso = 0;
       foreach(Produto pac in pacote)
-        { peso += pac.getPeso(); }
-      return peso; 
+        { peso += pac.getPeso() * pac.getQuantidade(); }
+      return peso + frete; 
     }
     public double getVolume() { 
       double volume = 0;
       foreach(Produto pac in pacote)
-        { volume += pac.getVolume(); }
+        { volume += pac.getVolume() * pac.getQuantidade(); }
       return volume; 
     }
 
@@ -104,14 +104,16 @@ namespace logistica {
   public class Relatorio {
     private string id;
     private List<Encomenda> encomendas = new List<Encomenda>();
-    private List<Produto> produtos = new List<Produto>();
+    private string nomeCliente;
     private Data dataCompra;
     private int prazo; //  dias
-    private Data dataEntrega;
-    private Destino cliente;
     private int status; //  0 a 3 (cancelado, atrazado, entregue)
   }
 
+  public class DadosLog {
+    public int[] rota;
+    public double dist;
+  }
 
   public class Data {
     private int tempo;
