@@ -16,16 +16,21 @@ namespace logistica {
         Console.WriteLine();
       } 
       Console.WriteLine ("\nfim");
+
+      mercado.NovoCliente("Laion1");
+      mercado.NovoCliente("Laion2");
+      mercado.NovoCliente("Laion3"); 
+      mercado.NovoCliente("Laion4");
+      mercado.NovoCliente("Laion5");
+      mercado.NovoCliente("Laion6");
+      mercado.NovoCliente("Laion7");
+      mercado.NovoCliente("Laion8");
+      mercado.NovoCliente("Laion9");     
 */
-
-
-      //mercado.NovoCliente("Laion1");
-      //mercado.NovoCliente("Laion2");
-      //mercado.NovoCliente("Laion3");      
-
-      //mercado.NovoCaminhao();
       mercado.Ofertar();
       mercado.Vender();
+      //mercado.OrganizarEncomendas();
+      mercado.ComoViajar();
 
       //mercado.Salvar();
 

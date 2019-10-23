@@ -160,8 +160,8 @@ namespace logistica {
     }
 
     private void CarregarEncomendas(){
-      string lendo = "", cliente = "", data = "";
-      int id = 0, prazo = 0;
+      string lendo = "", data = "";
+      int id = 0, prazo = 0, cliente = 0;
       double preco = 0, frete = 0;  
       bool status = false;  
       using(Stream FileIn = File.Open(fileEncomendas, FileMode.Open)){
@@ -172,7 +172,7 @@ namespace logistica {
             if(lendo == "--") {
               id = int.Parse(Carregar.ReadLine());
               preco = double.Parse(Carregar.ReadLine());
-              cliente = Carregar.ReadLine();
+              cliente = int.Parse(Carregar.ReadLine());
               frete = double.Parse(Carregar.ReadLine());
               prazo = int.Parse(Carregar.ReadLine());
               data = Carregar.ReadLine();

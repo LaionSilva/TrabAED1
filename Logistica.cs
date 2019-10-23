@@ -11,9 +11,11 @@ namespace logistica {
     public DadosLog MelhorRota(List<string> nomes, List<Cliente> clientes, int r) {
       int[] rota = new int[r];
       DadosLog dados = new DadosLog();
+
       try{
         Console.WriteLine ("Combinando entregas...");
-        Combinar(r);
+        range = r;
+        Combinar();
         System.Threading.Thread.Sleep(1000);
         Console.WriteLine ("\nCalculando rota...");
 
@@ -23,6 +25,7 @@ namespace logistica {
 
         for(int i = 0; i < n; i++) {
           double auxDist = 0;
+
           for(int j = 0; j < r; j++) {
             coordOr = coordDe;
             coordDe = clientes[ getClientes(nomes[ result[j, i] ], clientes) ].getCoord();
@@ -30,11 +33,13 @@ namespace logistica {
           }
           if(auxDist < dist) { 
             dist = auxDist; 
-            for(int j = 0; j < r; j++) 
-              { rota[j] = result[j, i]; }
+            for(int j = 0; j < r; j++) { 
+              rota[j] = result[j, i]; 
+            }
           } 
-          if(i == n - 1)  
-            { dist += calcularDistancia(coordDe[0], coordDe[1], 0, 0); }  
+          if(i == n - 1) { 
+            dist += calcularDistancia(coordDe[0], coordDe[1], 0, 0); 
+          }  
         }
 
         //  TESTE, APAGAR DEPOIS
@@ -42,52 +47,54 @@ namespace logistica {
         for(int i= 0; i < rota.Length; i++) { Console.Write("{0} ", rota[i]); }
         Console.Write(" - Dist: {0}km ", dist * 111.12);
         Console.WriteLine();
+        //  FIM DO TESTE
 
-        dados.rota = rota; dados.dist = dist * 111.12;
+        dados.rota = rota; 
+        dados.distancia = dist * 111.12;
       } catch { Console.WriteLine ("Erro: Melhor rota - log:MRo"); }
       
       return dados;
     }
 
-    private double calcularDistancia(double lat1,double lon1, double lat2, double lon2){
-      try { return Math.Sqrt( Math.Pow(lat1 - lat2, 2) + Math.Pow(lon1 - lon2, 2)); }
-      catch { Console.WriteLine ("Erro: Calcular Distancia - log:CDi"); return 100; }
+    private double calcularDistancia(double lat1,double lon1, double lat2, double lon2) {
+      try { 
+        return Math.Sqrt( Math.Pow(lat1 - lat2, 2) + Math.Pow(lon1 - lon2, 2)); 
+      } catch { Console.WriteLine ("Erro: Calcular Distancia - log:CDi"); return 100; }
     }
 
-    public int getClientes(string nome, List<Cliente> clientes){ //  Encontrar o id de algum cliente pelo nome - retorna -1 caso não encontre
-      try{
-        for(int i = 0; i < clientes.Count; i++){
-          if(nome == clientes[i].getNome()) { return i; }
+    public int getClientes(string nome, List<Cliente> clientes) { //  Encontrar o id de algum cliente pelo nome - retorna -1 caso não encontre
+      try {
+        for(int i = 0; i < clientes.Count; i++) {
+          if(nome == clientes[i].getNome()) 
+            { return i; }
         } return -1;
       } catch { Console.WriteLine ("Erro: Get Clientes - log:GCl"); return -1; }      
     }
 
-    private void Combinar(int i){
-      try{
-        range = i;
+    private void Combinar() {
+      try {
         valores = new int[range];
-        for(int j = i; j > 1; j--) 
-          { n *= j;  }
-        result = new int[i, n];
+        for(int j = range; j > 1; j--) 
+          { n *= j; }
+        result = new int[range, n];
         nFor(0); 
       } catch {  Console.WriteLine ("Erro: Combinar - log:com");  }           
     }
 
-    private void nFor(int a){
-      if(a < range){
-        for (int i = 0; i < range; i++){
+    private void nFor(int a) {
+      if(a < range) {
+        for (int i = 0; i < range; i++) {
           valores[a] = i;
           nFor(a + 1);                    
         } 
-      } else { Testar(); }
-      
+      } else { Testar(); }      
     }
 
-    private void Testar(){
+    private void Testar() {
       bool falha = false;
       for(int i = 0; i < range - 1; i++) {
         for(int j = i + 1; j < range; j++) {
-          if (valores[i] == valores[j]) { 
+          if(valores[i] == valores[j]) { 
             falha = true; 
             j = range; 
             i = range; 
@@ -95,8 +102,9 @@ namespace logistica {
         }
       }
       if(!falha) {
-        for(int i = 0; i < range; i++) 
-          { result[i, c] = valores[i]; }
+        for(int i = 0; i < range; i++) { 
+          result[i, c] = valores[i]; 
+        }
         c++; 
       }      
     }
