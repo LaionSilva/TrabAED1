@@ -17,6 +17,7 @@ namespace logistica {
     public Logistica rota = new Logistica();
     private Caminhao veiculo = new Caminhao(); 
     public Save file = new Save();
+    string[] inf = new string[5];
     
     public Distribuidora(double lat = 0, double lon = 0, int i = 10000, double c = 0, double l = 0.4) {
       coord[0] = lat;
@@ -25,7 +26,7 @@ namespace logistica {
       carteira = c;
       coefLucro = l;
 
-      Carregar();      
+      Carregar();    
       Salvar();
     }
 
@@ -35,12 +36,17 @@ namespace logistica {
       file.setProdutos(produtos); 
       file.setClientes(clientes);
       file.setEncomendas(encomendas);  
+      file.setEntregas(entregas);
     }
 
     public void Carregar() { //  Carregar listas de dados.txt
       produtos = file.getProdutos(); 
       clientes = file.getClientes(); 
-      encomendas = file.getEncomendas();      
+      encomendas = file.getEncomendas();  
+    }
+
+    public void ResetarFiles() {
+      file.Reset();
     }
     //  ARMAZENAMENTO DE DADOS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +102,7 @@ namespace logistica {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  CLIENTES
     public void NovoCliente(string nome) { //  Cadastrar novo cliente para a distribuidora - localização aleatória
-      try{
+      //try{
         List<int> ids = new List<int>();
         ids.Add(0);
         foreach(Cliente c in clientes) {
@@ -104,10 +110,10 @@ namespace logistica {
         }
         Random rand = new Random();
         clientes.Add( new Cliente(ids.Max() + 1, nome, rand.Next(-4000,4000) / 100, rand.Next(-8000,8000) / 100) );
-        coord = clientes[getClientes(nome)].getCoord();
+        coord = clientes[clientes.Count - 1].getCoord();
         Console.WriteLine("Novo cliente: {0} - lat: {1}, lon: {2}", nome, coord[0], coord[1]);
         Salvar();
-      } catch { Console.WriteLine ("Erro: Novo Cliente - dis:NCl"); }       
+      //} catch { Console.WriteLine ("Erro: Novo Cliente - dis:NCl"); }       
     }
 
     public void Ofertar() { //  Oferecer ao cliente os produtos
@@ -119,11 +125,12 @@ namespace logistica {
             { Console.WriteLine("Erro ao ofertar produtos: dis-ofe"); }
           else if (oferta == 2) 
             { compra = true; }
+          if(compra) { Console.WriteLine("Cliente {0} comprou", c.getNome()); }
         }
         if(compra) { 
-          Console.WriteLine("Pedido realizado"); 
           Salvar();
-        }
+          Console.WriteLine("Pedidos anotados!\n");
+        } else { Console.WriteLine("Não houve novos pedidos\n"); }
       } catch { Console.WriteLine ("Erro: Ofertar - dis:ofe"); }     
     }
 
@@ -151,16 +158,16 @@ namespace logistica {
           }
         }
         if(venda) { 
-          Console.WriteLine("Encomenda preparada"); 
           OrganizarEncomendas();
           Salvar();
-        }
+          Console.WriteLine("Pedidos aceitos!\nEncomendas geradas!\n");
+        } else { Console.WriteLine("Não há pedidos pendentes\n"); }
       } catch { Console.WriteLine ("Erro: Vender - dis:ven"); }      
     }
 
     public int getClientes(string nome){ //  Encontrar o id de algum cliente pelo nome - retorna -1 caso não encontre
       for(int i = 0; i < clientes.Count; i++){
-        if(nome == clientes[i].getNome()) { return i; }
+        if(nome == clientes[i].getNome()) { return clientes[i].getId(); }
       } return -1;
     }
     //  CLIENTES
@@ -191,18 +198,15 @@ namespace logistica {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  LOGÍSTICA
     public void ComoViajar(){
-      Console.WriteLine ("\nVIAGEM");
+      Console.WriteLine ("\nGERAR VIAGEM");
       List<string> nomeClientes = new List<string>();//  Nome dos clientes atendidos
       List<Cliente> osClientes = new List<Cliente>(); //  Lista com os Clientes atendidos
       List<double> precoPorCliente = new List<double>(); //  Somatorio dos preços das encomendas por cliente 
       List<int> idCli = new List<int>();
-
-      double[] coordCliente = new double[2];
-      double lat1, lon1, lat2, lon2; //  auxiliar
       double precoTotal = 0; //  Valor bruto que vamos receber
-      
       DadosLog dados = new DadosLog();    
 
+      System.Threading.Thread.Sleep(50);
       for(int i = 0; i < encomendas.Count; i++) {
         if(idCli.IndexOf( encomendas[i].getCliente() ) == -1) {
           idCli.Add( encomendas[i].getCliente() );
@@ -215,20 +219,19 @@ namespace logistica {
         }
         if(idCli.Count >= 8) { break; }
       }
+      System.Threading.Thread.Sleep(50);
 
-      for(int i = 0; i < precoPorCliente.Count; i++) { 
-        precoTotal += precoPorCliente[i];
-      } 
+        for(int i = 0; i < precoPorCliente.Count; i++) { 
+          precoTotal += precoPorCliente[i];
+        } 
 
-      //  função Laion(nomeClientes) ==> int[nome.Cont] = rota.MelhorRota(nomes (List<string>), clientes, nome.Count);
-      Console.WriteLine("Dentro de disribuidora, antes de passar para logistica {0}", encomendas.Count); //  TESTE
-      Console.WriteLine("Dentro de disribuidora, antes de passar para logistica {0}", nomeClientes.Count); //  TESTE
-      dados = rota.MelhorRota(nomeClientes, osClientes, nomeClientes.Count);
-
-      dados.custo = (dados.distancia / veiculo.getEficiencia())*3.686 + veiculo.calcularDiariaMotorista(dados.distancia); //  preço do diesel 3,686
-      dados.lucro = (precoTotal/1.4) - dados.custo;
-      Console.WriteLine ("\ndistancia: {0}km\ncusto: R$:{1}\nlucro: R$:{2}", dados.distancia, dados.distancia, dados.lucro);
-      NovoRelatorioEntrega(dados, osClientes);
+        dados = rota.MelhorRota(nomeClientes, osClientes, nomeClientes.Count);
+        dados.custo = (dados.distancia / veiculo.getEficiencia())*3.686 + veiculo.calcularDiariaMotorista(dados.distancia); //  preço do diesel 3,686
+        dados.lucro = dados.custo - (dados.custo/1.4);
+        Salvar();
+        
+        NovoRelatorioEntrega(dados, osClientes);
+      
     }
 
     private void NovoRelatorioEntrega(DadosLog dados, List<Cliente> CliEntrega){
@@ -249,17 +252,76 @@ namespace logistica {
         foreach(Encomenda e in encomendas) {          
           if(idClientes.IndexOf(e.getCliente()) != -1 ){
             pacote.Add(e.getId());
-            auxEnc.Add(e); Console.WriteLine ("relatorio ok");
+            auxEnc.Add(e);
           }
         }
         foreach(Encomenda e in auxEnc) {
           encomendas.Remove(e);
+          e.setStatusEntrega(true);
         }
+        entregas.AddRange(auxEnc);
         Salvar();
         
         diarioEntregas.Add( new Relatorio(ids.Max() + 1, idClientes, pacote, dados.distancia, dados.custo, dados.lucro) );
-        Console.WriteLine ("Novo relatório de entrega gerado. id: {0}", ids.Max() + 1);
+        Console.WriteLine ("Novo relatório de entrega gerado.\n");
       } catch { Console.WriteLine ("Erro: Novo Relatório de Entrega - dis:NRE"); }        
+    }
+
+    public void ImprimirRelatório() { // EM DESENVOLVIMENTO
+      if(diarioEntregas.Count > 0){
+        List<int> idEnt = new List<int>();
+        List<int> idCli = new List<int>();
+
+        System.Threading.Thread.Sleep(10);
+        foreach(Encomenda e in entregas){
+          idEnt.Add(e.getId()); 
+        }
+        foreach(Cliente c in clientes){
+          idCli.Add(c.getId());
+        }
+        int[] memoria = new int[2];
+
+        inf[0] = "\n==========  DIÁRIO  DE  ENTREGA  ==========";
+        Console.WriteLine (inf[0]);
+
+        System.Threading.Thread.Sleep(10);
+        foreach(int c in diarioEntregas[0].getClientes()) {
+          double[] auxCoord = clientes[idCli.IndexOf(c)].getCoord(); 
+          inf[1] ="\nCliente: " + String.Format("{0}", clientes[idCli.IndexOf(c)].getNome()) + 
+                  " - ID: " + String.Format("{0}", auxCoord[0]) + 
+                  " | lat " + String.Format("{0}", auxCoord[1]) + 
+                  " - lon " + String.Format("{0}", clientes[idCli.IndexOf(c)].getId());
+          Console.WriteLine (inf[1]);
+
+          foreach(int e in diarioEntregas[0].getEntregas()){
+            System.Threading.Thread.Sleep(10);            
+            if((idEnt.IndexOf(e) >= 0) && (entregas[idEnt.IndexOf(e)].getCliente() == c) && (e != memoria[0])) {
+              memoria[0] = e;
+              inf[2] = "Lote ID: " + String.Format("{0}", e);
+              Console.WriteLine (inf[2]);
+
+              foreach(Produto p in entregas[idEnt.IndexOf(e)].getPacote()) {
+                System.Threading.Thread.Sleep(10);
+                if(entregas[idEnt.IndexOf(e)].getId() != memoria[1]) {
+                  memoria[1] = entregas[idEnt.IndexOf(e)].getId();
+                  inf[3] =  "Produto: " + String.Format("{0}", p.getTipo()) + 
+                            " | quant: " + String.Format("{0}", p.getQuantidade()) + 
+                            " - preço: " + String.Format("{0}", p.getCusto() * p.getQuantidade()) + 
+                            " - peso: " + String.Format("{0}", p.getPeso() * p.getQuantidade()) + 
+                            " - vol: " + String.Format("{0}", p.getVolume() * p.getQuantidade());
+                  Console.WriteLine (inf[3]);
+                }
+              }
+            }
+          }
+        }
+        inf[4] = "";
+        Console.WriteLine ("\nDistância: {0}km\nCusto total: R$:{1}\nLucro total: R$:{2}", 
+                            String.Format("{0:0.00}", diarioEntregas[0].getDistancia()), 
+                            String.Format("{0:0.00}", diarioEntregas[0].getCusto()), 
+                            String.Format("{0:0.00}", diarioEntregas[0].getLucro()));
+        diarioEntregas.RemoveAt(0);
+      } else { Console.WriteLine ("Não há relatório a relatar"); }
     }
     
     private double calcularDistancia(double lat1, double lon1, double lat2, double lon2){
@@ -274,3 +336,5 @@ namespace logistica {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////    
   }
 }
+
+

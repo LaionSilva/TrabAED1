@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,16 +8,19 @@ namespace logistica {
 
     private List<Produto> produtos = new List<Produto>(); 
     private List<Encomenda> encomendas = new List<Encomenda>();
+    private List<Encomenda> entregas = new List<Encomenda>();
     private List<Produto> pedidos = new List<Produto>();
     private List<Relatorio> diarioEmpresarial = new List<Relatorio>(); 
-    private List<Caminhao> frota = new List<Caminhao>(); 
+    //private List<Caminhao> frota = new List<Caminhao>(); 
 	  private Cliente clientes = new Cliente(); 
     private List<Cliente> Clientes = new List<Cliente>(); 
+    string[] relatorio = new string[5];
 
     //Endereço dos arquivos salvos
     private string fileProdutos = "file_produtos.txt";
     private string fileClientes = "file_clientes.txt";
     private string fileEncomendas = "file_encomendas.txt";
+    private string fileEntregas = "file_entregas.txt";
 
     public Save() { CheckArquivo(); }
 
@@ -34,6 +38,11 @@ namespace logistica {
     public List<Encomenda> getEncomendas(){
       Carregar("encomendas");
       return encomendas;
+    }
+
+    public List<Encomenda> getEntregas(){
+      Carregar("entregas");
+      return entregas;
     }
     
 
@@ -62,6 +71,11 @@ namespace logistica {
       encomendas = e;
       Guardar("encomendas");
     }
+
+    public void setEntregas(List<Encomenda> e) {
+      entregas = e;
+      Guardar("entregas");
+    }
    
 
     private void Carregar(string dado){ //  Get do dados.txt para todas as listas
@@ -69,24 +83,45 @@ namespace logistica {
         case "produtos": CarregarProdutos(); break;
         case "clientes": CarregarClientes(); break;
         case "encomendas": CarregarEncomendas(); break;
+        case "entregas": CarregarEntregas(); break;
       }
+      System.Threading.Thread.Sleep(50);
     }
     
     public void Guardar(string dado){ //  Set no dados.txt os dados de todas as listas 
+      System.Threading.Thread.Sleep(50);
       switch(dado){
         case "produtos": GuardarProdutos(); break;
         case "clientes": GuardarClientes(); break;
         case "encomendas": GuardarEncomendas(); break;
+        case "entregas": GuardarEntregas(); break;
       }
+      System.Threading.Thread.Sleep(50);
+    }
+
+    public void Reset() { //  Apagar todos os dados de todos os arquivos de armazenamento
+      try{
+        System.Threading.Thread.Sleep(50);
+        System.IO.File.Delete(fileProdutos);
+        System.IO.File.Delete(fileEncomendas);
+        System.IO.File.Delete(fileEntregas);
+        System.IO.File.Delete(fileClientes);
+        CheckArquivo();
+        Console.WriteLine("Dados de armazenamento apagados");
+      } catch {  Console.WriteLine("Erro: Reset - sav:res");}
     }
 
     private void CheckArquivo(){ //  Verifica a existencia de um arquivo.txt, caso não exista é criado um
+      System.Threading.Thread.Sleep(50);
       if (!System.IO.File.Exists(fileProdutos))
         { using (StreamWriter Salvar = File.AppendText(fileProdutos)) {} }
       if (!System.IO.File.Exists(fileClientes))
         { using (StreamWriter Salvar = File.AppendText(fileClientes)) {} }
       if (!System.IO.File.Exists(fileEncomendas))
         { using (StreamWriter Salvar = File.AppendText(fileEncomendas)) {} }
+      if (!System.IO.File.Exists(fileEntregas))
+        { using (StreamWriter Salvar = File.AppendText(fileEntregas)) {} }
+      System.Threading.Thread.Sleep(50);
     }
 
 
@@ -162,8 +197,7 @@ namespace logistica {
     private void CarregarEncomendas(){
       string lendo = "", data = "";
       int id = 0, prazo = 0, cliente = 0;
-      double preco = 0, frete = 0;  
-      bool status = false;  
+      double frete = 0;  
       using(Stream FileIn = File.Open(fileEncomendas, FileMode.Open)){
         using(StreamReader Carregar = new StreamReader(FileIn)){
           lendo = Carregar.ReadLine(); 
@@ -171,13 +205,10 @@ namespace logistica {
             List<Produto> produtosEn = new List<Produto>();
             if(lendo == "--") {
               id = int.Parse(Carregar.ReadLine());
-              preco = double.Parse(Carregar.ReadLine());
               cliente = int.Parse(Carregar.ReadLine());
               frete = double.Parse(Carregar.ReadLine());
               prazo = int.Parse(Carregar.ReadLine());
               data = Carregar.ReadLine();
-              if(Carregar.ReadLine() == "true") { status = true; }
-              else { status = false; }
               lendo = Carregar.ReadLine();
                      
               while (lendo == "-#"){
@@ -191,6 +222,41 @@ namespace logistica {
                 lendo = Carregar.ReadLine();
               }  
               encomendas.Add( new Encomenda(id, produtosEn, cliente, 0, frete, prazo, data) );
+            } 
+            
+          } while (lendo != null); 
+        }
+      }
+    }
+
+    private void CarregarEntregas(){
+      string lendo = "", data = "";
+      int id = 0, prazo = 0, cliente = 0;
+      double frete = 0;   
+      using(Stream FileIn = File.Open(fileEntregas, FileMode.Open)){
+        using(StreamReader Carregar = new StreamReader(FileIn)){
+          lendo = Carregar.ReadLine(); 
+          do{
+            List<Produto> produtosEn = new List<Produto>();
+            if(lendo == "--") {
+              id = int.Parse(Carregar.ReadLine());
+              cliente = int.Parse(Carregar.ReadLine());
+              frete = double.Parse(Carregar.ReadLine());
+              prazo = int.Parse(Carregar.ReadLine());
+              data = Carregar.ReadLine();
+              lendo = Carregar.ReadLine();
+                     
+              while (lendo == "-#"){
+                produtosEn.Add( 
+                  new Produto(Carregar.ReadLine(), 
+                  int.Parse(Carregar.ReadLine()), 
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine()),
+                  double.Parse(Carregar.ReadLine())
+                ) );  
+                lendo = Carregar.ReadLine();
+              }  
+              entregas.Add( new Encomenda(id, produtosEn, cliente, 0, frete, prazo, data) );
             } 
             
           } while (lendo != null); 
@@ -241,14 +307,31 @@ namespace logistica {
         foreach(Encomenda e in encomendas){
           Salvar.WriteLine("--"); 
           Salvar.WriteLine(e.getId());  
-          Salvar.WriteLine(e.getPreco());
           Salvar.WriteLine(e.getCliente());
           Salvar.WriteLine(e.getFrete());
           Salvar.WriteLine(e.getPrazo());
           Salvar.WriteLine(e.getDataCompra());
-          if(e.getStatusEntrega())
-            { Salvar.WriteLine("true"); }
-          else { Salvar.WriteLine("false"); }
+          foreach(Produto p in e.getPacote()){
+            Salvar.WriteLine("-#"); 
+            Salvar.WriteLine(p.getTipo()); 
+            Salvar.WriteLine(p.getQuantidade()); 
+            Salvar.WriteLine(p.getCusto()); 
+            Salvar.WriteLine(p.getPeso()); 
+            Salvar.WriteLine(p.getVolume()); 
+          }
+        }
+      }
+    }
+
+    private void GuardarEntregas(){
+      using (StreamWriter Salvar = File.AppendText(fileEntregas)) { 
+        foreach(Encomenda e in entregas){
+          Salvar.WriteLine("--"); 
+          //Salvar.WriteLine(e.getId());  
+          Salvar.WriteLine(e.getCliente());
+          Salvar.WriteLine(e.getFrete());
+          Salvar.WriteLine(e.getPrazo());
+          Salvar.WriteLine(e.getDataCompra());
           foreach(Produto p in e.getPacote()){
             Salvar.WriteLine("-#"); 
             Salvar.WriteLine(p.getTipo()); 

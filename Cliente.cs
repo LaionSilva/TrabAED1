@@ -23,7 +23,7 @@ namespace logistica {
         Random rand = new Random();
         if ((rand.Next(1,100) <= tendencia) && (estoque.Count > 0)) {
           int index = rand.Next(0, estoque.Count);
-          int quant = rand.Next(1, 10);
+          int quant = rand.Next(1, 50);
           pedidos.Add(new Produto(
             estoque[index].getTipo(), 
             quant, 

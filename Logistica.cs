@@ -15,9 +15,10 @@ namespace logistica {
       try{
         Console.WriteLine ("Combinando entregas...");
         range = r;
+        System.Threading.Thread.Sleep(100);
         Combinar();
-        System.Threading.Thread.Sleep(1000);
-        Console.WriteLine ("\nCalculando rota...");
+        System.Threading.Thread.Sleep(100);
+        Console.WriteLine ("Calculando rota...");
 
         double[] coordOr = new double[2] {0, 0};
         double[] coordDe = new double[2] {0, 0};
@@ -41,13 +42,10 @@ namespace logistica {
             dist += calcularDistancia(coordDe[0], coordDe[1], 0, 0); 
           }  
         }
-
-        //  TESTE, APAGAR DEPOIS
+        
+        Console.WriteLine("Melhor rota encontrada: {0} clientes", rota.Length);
+        Console.Write("Dist: {0}km \n", String.Format("{0:0.00}", dist * 111.12));
         Console.WriteLine();
-        for(int i= 0; i < rota.Length; i++) { Console.Write("{0} ", rota[i]); }
-        Console.Write(" - Dist: {0}km ", dist * 111.12);
-        Console.WriteLine();
-        //  FIM DO TESTE
 
         dados.rota = rota; 
         dados.distancia = dist * 111.12;
@@ -87,12 +85,13 @@ namespace logistica {
           valores[a] = i;
           nFor(a + 1);                    
         } 
-      } else { Testar(); }      
+      } else { Testar(); } 
+      if((range > 8) && (a < (range - 8))) { System.Threading.Thread.Sleep(5); }
     }
 
     private void Testar() {
       bool falha = false;
-      for(int i = 0; i < range - 1; i++) {
+      for(int i = 0; i < range - 1; i++) { System.Threading.Thread.Sleep(5);
         for(int j = i + 1; j < range; j++) {
           if(valores[i] == valores[j]) { 
             falha = true; 

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace logistica {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  public class Produto{ //  FIXO
+  public class Produto {
     private string tipo;
     private int quantidade;
-    private double custo; //  Valor que a distribuidora gastou para comprar
+    private double custo; //  custo de compra
     private double peso;
     private double volume;
 
@@ -40,7 +40,7 @@ namespace logistica {
     private string dataCompra;
     private bool statuaEntrega;
 
-    public Encomenda(int i, List<Produto> p, int c, double cl, double f = 0, int pr = 0, string dc = "@", bool s = false) { //  TODO: Controle de datas
+    public Encomenda(int i, List<Produto> p, int c, double cl, double f = 0, int pr = 0, string dc = "@", bool s = false) {
       id = i;
       pacote = p;
       cliente = c;
@@ -49,38 +49,40 @@ namespace logistica {
       statuaEntrega = s;
       double valor = 0;
 
-      foreach(Produto pac in p){
+      foreach(Produto pac in p) {
         valor += pac.getCusto() * pac.getQuantidade() * (1 + cl);
       }
       preco = valor;
-      if(dc == "@") { dataCompra = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"); }
-      else { dataCompra = dc; }     
+      if(dc == "@") { 
+        dataCompra = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"); 
+      } else { dataCompra = dc; }     
     }
 
-    // GETS
     public double getPeso() { 
       double peso = 0;
-      foreach(Produto pac in pacote)
-        { peso += pac.getPeso() * pac.getQuantidade(); }
+      foreach(Produto pac in pacote) { 
+        peso += pac.getPeso() * pac.getQuantidade(); 
+      }
       return peso + frete; 
     }
+
     public double getVolume() { 
       double volume = 0;
-      foreach(Produto pac in pacote)
-        { volume += pac.getVolume() * pac.getQuantidade(); }
+      foreach(Produto pac in pacote) { 
+        volume += pac.getVolume() * pac.getQuantidade(); 
+      }
       return volume; 
     }
-
-    public int getId() { return id; }
+   
     public List<Produto> getPacote() { return pacote; }
-    public double getPreco() { return preco; }
-    public int getCliente() { return cliente; }
-    public double getFrete() { return frete; }
-    public int getPrazo() { return prazo; }
     public string getDataCompra() { return dataCompra; }
+    public double getPreco() { return preco; }
+    public double getFrete() { return frete; }
+    public int getId() { return id; }
+    public int getCliente() { return cliente; }
+    public int getPrazo() { return prazo; }
     public bool getStatusEntrega() { return statuaEntrega; }
 
-    //SETS
     public void setStatusEntrega(bool s) { statuaEntrega = s; }
   }
 
@@ -103,7 +105,7 @@ namespace logistica {
     }
 
     public int getId() { return id; }
-    public List<int> getCliente() { return clientes; }
+    public List<int> getClientes() { return clientes; }
     public List<int> getEntregas() { return entregas; }
     public double getDistancia() { return distancia; }
     public double getCusto() { return custo; }
