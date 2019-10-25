@@ -99,7 +99,8 @@ namespace logistica {
       Console.WriteLine("\nEscolha a operação desejada ou EXIT para sair: (Digite o código)");
       Console.WriteLine("CC - Cadastrar Cliente");
       Console.WriteLine("CP - Cadastrar Produto");
-      Console.WriteLine("BC - Banco de Dados Clientes");
+      Console.WriteLine("LC - Listar Clientes");
+      Console.WriteLine("LP - Listar Produtos");
       Console.WriteLine("EXIT - Voltar");
       Console.Write("\nCódigo: ");      
       asw = Console.ReadLine();
@@ -117,7 +118,8 @@ namespace logistica {
         switch (comando) { 
           case "CC": CadastarCliente(); break;
           case "CP": CadastarProduto(); break;
-          case "BC": BancoClientes(); break;
+          case "LC": BancoClientes(); break;
+          case "LP": BancoProdutos(); break;
           case "EXIT": loop = false; break;
           default: Console.WriteLine("\nEscolha uma opção válida!"); break;
         }
@@ -195,6 +197,12 @@ namespace logistica {
     public static void BancoClientes(){
       Console.WriteLine("\nClientes cadastrados:");
       mercado.ListarClientes();
+      Console.WriteLine();
+    }
+
+    public static void BancoProdutos(){
+      Console.WriteLine("\nProdutos cadastrados:");
+      mercado.ListarProdutos();
       Console.WriteLine();
     }
     //  MÉTODOS ADMINISTRATIVOS
