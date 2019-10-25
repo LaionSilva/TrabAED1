@@ -16,7 +16,13 @@ namespace logistica {
         Console.WriteLine ("Combinando entregas...");
         range = r;
         System.Threading.Thread.Sleep(100);
-        Combinar();
+        if(!Combinar()){
+          if(!Combinar()){
+            if(!Combinar()){
+              Console.WriteLine ("Erro ao calcular rotas - log:MRo");
+            }
+          }
+        }
         System.Threading.Thread.Sleep(100);
         Console.WriteLine ("Calculando rota...");
 
@@ -69,27 +75,30 @@ namespace logistica {
       } catch { Console.WriteLine ("Erro: Get Clientes - log:GCl"); return -1; }      
     }
 
-    private void Combinar() {
+    private bool Combinar() {
       try {
         valores = new int[range];
         for(int j = range; j > 1; j--) 
           { n *= j; }
-        result = new int[range, n];
-        nFor(0); 
-      } catch {  Console.WriteLine ("Erro: Combinar - log:com");  }           
+        result = new int[range, n];         
+        return nFor(0);
+      } catch {  Console.WriteLine ("Erro: Combinar - log:com");  }  
+      return false;         
     }
 
-    private void nFor(int a) {
+    private bool nFor(int a) {
+      bool aux = false;
       if(a < range) {
         for (int i = 0; i < range; i++) {
           valores[a] = i;
-          nFor(a + 1);                    
+          aux = nFor(a + 1);                    
         } 
-      } else { Testar(); } 
+      } else { aux = Testar(); } 
       if((range > 8) && (a < (range - 8))) { System.Threading.Thread.Sleep(5); }
+      return aux;
     }
 
-    private void Testar() {
+    private bool Testar() {
       bool falha = false;
       for(int i = 0; i < range - 1; i++) { System.Threading.Thread.Sleep(5);
         for(int j = i + 1; j < range; j++) {
@@ -104,8 +113,10 @@ namespace logistica {
         for(int i = 0; i < range; i++) { 
           result[i, c] = valores[i]; 
         }
+        return true;
         c++; 
-      }      
+      }
+      return false;      
     }
 
   }

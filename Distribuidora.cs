@@ -8,7 +8,7 @@ namespace logistica {
     private double coefLucro;
     private double carteira; //  total de verbas
     private bool CarteiraInf = true;
-    private int capacidade;
+    //private int capacidade;
     private List<Produto> produtos = new List<Produto>(); 
     private List<Encomenda> encomendas = new List<Encomenda>();
     private List<Encomenda> entregas = new List<Encomenda>();
@@ -17,12 +17,12 @@ namespace logistica {
     public Logistica rota = new Logistica();
     private Caminhao veiculo = new Caminhao(); 
     public Save file = new Save();
-    string[] inf = new string[5];
+    string[] inf = new string[5]; //  Atributo para futuro armazenamento de relatórios
     
-    public Distribuidora(double lat = 0, double lon = 0, int i = 10000, double c = 0, double l = 0.4) {
+    public Distribuidora(double lat = 0, double lon = 0, /*int i = 10000,*/ double c = 0, double l = 0.4) {
       coord[0] = lat;
       coord[1] = lon;
-      capacidade = i;
+      //capacidade = i;
       carteira = c;
       coefLucro = l;
 
@@ -114,13 +114,19 @@ namespace logistica {
       } catch { return false; }
       return true;
     }
+
+    public void ListarProdutos(){
+      foreach (Produto p in produtos){
+        Console.WriteLine("Produto: {0}  |  Quantidade: {1}  |  Peso/Un: {2} |  Volume/Un: {3}", p.getTipo(), p.getQuantidade(), p.getPeso(),p.getVolume());
+      }
+    }
     //  PRODUTOS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  CLIENTES
     public void NovoCliente(string nome) { //  Cadastrar novo cliente para a distribuidora - localização aleatória
-      //try{
+      try{
         List<int> ids = new List<int>();
         ids.Add(0);
         foreach(Cliente c in clientes) {
@@ -131,7 +137,7 @@ namespace logistica {
         coord = clientes[clientes.Count - 1].getCoord();
         Console.WriteLine("Novo cliente: {0} - lat: {1}, lon: {2}", nome, coord[0], coord[1]);
         Salvar();
-      //} catch { Console.WriteLine ("Erro: Novo Cliente - dis:NCl"); }       
+      } catch { Console.WriteLine ("Erro: Novo Cliente - dis:NCl"); }       
     }
 
     public void Ofertar() { //  Oferecer ao cliente os produtos
@@ -189,13 +195,11 @@ namespace logistica {
       } return -1;
     }
 
-    public void ListarClientes(){ //  Encontrar o id de algum cliente pelo nome - retorna -1 caso não encontre
+    public void ListarClientes(){
       foreach (Cliente c in clientes){
-        Console.WriteLine("Nome: {0}  |  Id: {1}  |  Lat: {2} |  Lon: {3}", c.getNome(), c.getId(), c.getLat(),c.getLat());
+        Console.WriteLine("Nome: {0}  |  Id: {1}  |  Lat: {2} |  Lon: {3}", c.getNome(), c.getId(), c.getLat(), c.getLon());
       }
     }
-
-
     //  CLIENTES
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -266,7 +270,6 @@ namespace logistica {
         List<int> idClientes = new List<int>();
         List<int> pacote = new List<int>();
         List<Encomenda> auxEnc = new List<Encomenda>();
-        int[] indices = new int[dados.rota.Length];
 
         ids.Add(0);
         foreach(Relatorio r in diarioEntregas) {
@@ -342,7 +345,7 @@ namespace logistica {
           }
         }
         inf[4] = "";
-        Console.WriteLine ("\nDistância: {0}km\nCusto total: R$:{1}\nLucro total: R$:{2}", 
+        Console.WriteLine ("\nDistância: {0}km\nCusto total: R$:{1}\nLucro total: R$:{2}\n", 
                             String.Format("{0:0.00}", diarioEntregas[0].getDistancia()), 
                             String.Format("{0:0.00}", diarioEntregas[0].getCusto()), 
                             String.Format("{0:0.00}", diarioEntregas[0].getLucro()));

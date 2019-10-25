@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace logistica {
   public class Caminhao {
     private double eficMotor; //  (Km/L) / peso[Kg]  
-    private List<Relatorio> diarioEntregas  = new List<Relatorio>();
+    //private List<Relatorio> diarioEntregas  = new List<Relatorio>();
 
     public Caminhao(double ef = 10){   
       eficMotor = ef;

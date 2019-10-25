@@ -10,11 +10,10 @@ namespace logistica {
     private List<Encomenda> encomendas = new List<Encomenda>();
     private List<Encomenda> entregas = new List<Encomenda>();
     private List<Produto> pedidos = new List<Produto>();
-    private List<Relatorio> diarioEmpresarial = new List<Relatorio>(); 
+    //private List<Relatorio> diarioEmpresarial = new List<Relatorio>(); 
     //private List<Caminhao> frota = new List<Caminhao>(); 
 	  private Cliente clientes = new Cliente(); 
     private List<Cliente> Clientes = new List<Cliente>(); 
-    string[] relatorio = new string[5];
 
     //Endereço dos arquivos salvos
     private string fileProdutos = "file_produtos.txt";
