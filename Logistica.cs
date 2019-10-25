@@ -12,17 +12,11 @@ namespace logistica {
       int[] rota = new int[r];
       DadosLog dados = new DadosLog();
 
-      try{
+      //try{
         Console.WriteLine ("Combinando entregas...");
         range = r;
         System.Threading.Thread.Sleep(100);
-        if(!Combinar()){
-          if(!Combinar()){
-            if(!Combinar()){
-              Console.WriteLine ("Erro ao calcular rotas - log:MRo");
-            }
-          }
-        }
+        Combinar();
         System.Threading.Thread.Sleep(100);
         Console.WriteLine ("Calculando rota...");
 
@@ -55,7 +49,7 @@ namespace logistica {
 
         dados.rota = rota; 
         dados.distancia = dist * 111.12;
-      } catch { Console.WriteLine ("Erro: Melhor rota - log:MRo"); }
+      //} catch { Console.WriteLine ("Erro: Melhor rota - log:MRo"); }
       
       return dados;
     }
@@ -75,30 +69,27 @@ namespace logistica {
       } catch { Console.WriteLine ("Erro: Get Clientes - log:GCl"); return -1; }      
     }
 
-    private bool Combinar() {
+    private void Combinar() {
       try {
         valores = new int[range];
         for(int j = range; j > 1; j--) 
           { n *= j; }
         result = new int[range, n];         
-        return nFor(0);
-      } catch {  Console.WriteLine ("Erro: Combinar - log:com");  }  
-      return false;         
+        nFor(0);
+      } catch {  Console.WriteLine ("Erro: Combinar - log:com");  }          
     }
 
-    private bool nFor(int a) {
-      bool aux = false;
+    private void nFor(int a) {
       if(a < range) {
         for (int i = 0; i < range; i++) {
           valores[a] = i;
-          aux = nFor(a + 1);                    
+          nFor(a + 1);                    
         } 
-      } else { aux = Testar(); } 
+      } else { Testar(); } 
       if((range > 8) && (a < (range - 8))) { System.Threading.Thread.Sleep(5); }
-      return aux;
     }
 
-    private bool Testar() {
+    private void Testar() {
       bool falha = false;
       for(int i = 0; i < range - 1; i++) { System.Threading.Thread.Sleep(5);
         for(int j = i + 1; j < range; j++) {
@@ -113,10 +104,8 @@ namespace logistica {
         for(int i = 0; i < range; i++) { 
           result[i, c] = valores[i]; 
         }
-        return true;
         c++; 
-      }
-      return false;      
+      }    
     }
 
   }

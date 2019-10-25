@@ -5,18 +5,19 @@ using System.Collections.Generic;
 namespace logistica {
   class MainClass {
     private static Distribuidora mercado = new Distribuidora();
-    private static string titulo =  "\n== 0 == 1 == 0 ==  A N Ô N I M U S   H . L  == 1 == 0 == 1 ==" +
-                                    "\n== 1 == 0 == 1 =  D I S T R I B U I D O R A  = 0 == 1 == 0 ==";
-    private static string fimProcesso =  "\n== 0 == 1 == 0 ==  A N Ô N I M U S   H . L  == 1 == 0 == 1 ==" +
-                                    "\n== 1 == 0 == 1 ==  D E S C O N E C T A D O  == 0 == 1 == 0 ==";
+    private static string titulo =  "\n=== 0 == 1 == 0 ====  A N Ô N I M U S   H . L  ==== 1 == 0 == 1 ===" +
+                                    "\n=== 1 == 0 == 1 ===  D I S T R I B U I D O R A  === 0 == 1 == 0 ===" +
+                                    "\nCode by: Higor Parnoff | Laion Fernandes - Engenharia de Computação";
+    private static string fimProcesso = "\n=== 0 == 1 == 0 ==  A N Ô N I M U S   H . L  == 1 == 0 == 1 ===" +
+                                        "\n=== 1 == 0 == 1 ==  D E S C O N E C T A D O  == 0 == 1 == 0 ===";
     private static string fachada = 
-      "_________________________________________________________________________________________\n" +
+      "________________________##_______________________________________________________________\n" +
+      "______________________##__##_____________________________________________________________\n" +
       "___######__###____##__######__###____##_##____##_####____####__######__##____##_#######__\n" + 
       "__##____##_##_##__##_##____##_##_##__##__##__##__##_##__##_##_##____##_##____##_##_______\n" + 
       "__########_##__##_##_##____##_##__##_##___####___##__####__##_##____##_##____##_#######__\n" + 
       "__##____##_##___####_##____##_##___####____##____##___##___##_##____##_##____##______##__\n" + 
-      "__##____##_##____###__######__##____###____##____##________##__######___######__#######__\n" + 
-      "_________________________________________________________________________________________";
+      "__##____##_##____###__######__##____###____##____##________##__######___######__#######__\n";
 
 
     public static void Main () {
@@ -30,7 +31,7 @@ namespace logistica {
 
       bool loop = true;
       while(loop) {
-        Console.WriteLine("\nO - Operacional | A - Administrativo | EXIT - Desconectar");
+        Console.WriteLine("\nO - Setor operacional | A - Setor administrativo | EXIT - Desconectar");
         Console.Write("\nEscolha o setor desejado... \nSetor: ");
         switch (Console.ReadLine().ToUpper()) { 
           case "O": MenuOperacional(); break;
@@ -51,7 +52,7 @@ namespace logistica {
       string asw = "";
       Console.Clear();
       Console.WriteLine (titulo);      
-      Console.WriteLine("\nEscolha a operação desejada ou EXIT para sair: (Digite o código)");
+      Console.WriteLine("\nEscolha a operação desejada: (Digite o código)");
       Console.WriteLine("OF - Ofertar Produtos");
       Console.WriteLine("VD - Vender Produtos");
       //Console.WriteLine("CC01 - Vender ");
@@ -96,11 +97,12 @@ namespace logistica {
       string asw = "";
       Console.Clear();
       Console.WriteLine (titulo);
-      Console.WriteLine("\nEscolha a operação desejada ou EXIT para sair: (Digite o código)");
+      Console.WriteLine("\nEscolha a operação desejada: (Digite o código)");
       Console.WriteLine("CC - Cadastrar Cliente");
       Console.WriteLine("CP - Cadastrar Produto");
       Console.WriteLine("LC - Listar Clientes");
       Console.WriteLine("LP - Listar Produtos");
+      Console.WriteLine("CPR - Comprar Produto");
       Console.WriteLine("EXIT - Voltar");
       Console.Write("\nCódigo: ");      
       asw = Console.ReadLine();
@@ -120,6 +122,7 @@ namespace logistica {
           case "CP": CadastarProduto(); break;
           case "LC": BancoClientes(); break;
           case "LP": BancoProdutos(); break;
+          case "CPR": ComprarProdutos(); break;
           case "EXIT": loop = false; break;
           default: Console.WriteLine("\nEscolha uma opção válida!"); break;
         }
@@ -177,19 +180,22 @@ namespace logistica {
       while(true) {
         Console.WriteLine("\nInforme os seguintes dados do novo produto:");
         Console.Write("\nNome: ");
-        string nome = Console.ReadLine();
-        Console.Write("Preço de custo R$: ");
-        double custo = double.Parse(Console.ReadLine());
-        Console.Write("Peso em Kg: ");
-        double peso = double.Parse(Console.ReadLine());
-        Console.Write("Volume em metro cúico: ");
-        double volume = double.Parse(Console.ReadLine());
-        if(mercado.NovoProduto(nome, custo, peso, volume) == true) {
-          Console.WriteLine("\nProduto Cadastrado com Sucesso!\n");
-          break;
-        }
-        Console.WriteLine("\nProduto já posssui cadastro!");
-        Console.Write("Deseja Cadastrar outro Produto?(y/n) "); 
+        try{
+          string nome = Console.ReadLine();
+          Console.Write("Preço de custo R$: ");
+          double custo = double.Parse(Console.ReadLine());
+          Console.Write("Peso em Kg: ");
+          double peso = double.Parse(Console.ReadLine());
+          Console.Write("Volume em metro cúbico: ");
+          double volume = double.Parse(Console.ReadLine());
+          if(mercado.NovoProduto(nome, custo, peso, volume) == true) {
+            Console.WriteLine("\nProduto Cadastrado com Sucesso!\n");
+            break;
+          }
+          Console.WriteLine("\nProduto já posssui cadastro!");
+        } catch { Console.Write("\nValor invalido detectado"); }    
+
+        Console.Write("Deseja Cadastrar outro Produto?(y/n) ");         
         if(Console.ReadLine().ToUpper() == "N") { break; }
       }
     }
@@ -204,6 +210,21 @@ namespace logistica {
       Console.WriteLine("\nProdutos cadastrados:");
       mercado.ListarProdutos();
       Console.WriteLine();
+    }
+
+    public static void ComprarProdutos(){
+      while(true) {
+        Console.WriteLine("\nInforme os seguintes dados:");
+        Console.Write("\nNome: ");
+        string nome = Console.ReadLine();
+        Console.Write("Quantidade: ");
+        try{ 
+          int quant = int.Parse(Console.ReadLine()); 
+          mercado.ComprarProduto(nome, quant);
+          break;
+        }
+        catch{ Console.Write("\nQuantidade não aceita\n"); }
+      }
     }
     //  MÉTODOS ADMINISTRATIVOS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////

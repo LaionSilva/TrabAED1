@@ -69,37 +69,30 @@ namespace logistica {
       return false;       
     }
 
-    private void AbastecerProdutos() {
-      foreach(Produto p in produtos) {
-        if(p.getQuantidade() < 300) {
-          if(!ComprarProduto(p.getTipo(), 1000)) {
-            Console.WriteLine ("Erro: Comprar Produto - dis:NPr | O produto {0} não foi comprado", p.getTipo());
-          }
-        }
-      }
-    }
-
-    private bool ComprarProduto(string tipo, int n) {
+    public bool ComprarProduto(string tipo, int n) {
       try{
         bool prod = false, renda = false;
         foreach(Produto p in produtos){
-          if(tipo == p.getTipo()) {
+          if(tipo.ToUpper() == p.getTipo().ToUpper()) {
             if((carteira >= n * p.getCusto()) || CarteiraInf){
               p.upQuant(n);
               if(!CarteiraInf) { carteira -= n * p.getCusto(); }
               renda = true;
-            } else { Console.WriteLine("Não há renda suficiente: dis-ComPro"); }       
+            } else { Console.WriteLine("\nNão há renda suficiente: dis-ComPro"); }       
             prod = true;
             break;             
-          }
+          } 
         }
         if(renda && prod) { 
-          Console.WriteLine("Estoque reabastecido"); 
+          Console.WriteLine("\nEstoque reabastecido"); 
           Salvar(); return true; 
         }
-        else if (!prod) { Console.WriteLine("Produto não encontrado"); return false; }
-        else { return false; }
-      } catch { Console.WriteLine ("Erro: Comprar Produto - dis:CPr"); return false;}      
+        else if (!prod) { Console.WriteLine("\nProduto não encontrado"); return false; }
+        else { 
+          Console.WriteLine("\nProduto não encontrado");
+          return false; 
+        }
+      } catch { Console.WriteLine ("\nErro: Comprar Produto - dis:CPr"); return false;}      
     }
 
     private bool DownEstoque(List<Produto> pacote) { // abater da Lista<produtos> o que foi vendido
@@ -117,7 +110,7 @@ namespace logistica {
 
     public void ListarProdutos(){
       foreach (Produto p in produtos){
-        Console.WriteLine("Produto: {0}  |  Quantidade: {1}  |  Peso/Un: {2} |  Volume/Un: {3}", p.getTipo(), p.getQuantidade(), p.getPeso(),p.getVolume());
+        Console.WriteLine("{0}  |  {1}un  |  {2}kg |  {3}m^3", p.getTipo(), p.getQuantidade(), p.getPeso(),p.getVolume());
       }
     }
     //  PRODUTOS
@@ -317,9 +310,9 @@ namespace logistica {
         foreach(int c in diarioEntregas[0].getClientes()) {
           double[] auxCoord = clientes[idCli.IndexOf(c)].getCoord(); 
           inf[1] ="\nCliente: " + String.Format("{0}", clientes[idCli.IndexOf(c)].getNome()) + 
-                  " - ID: " + String.Format("{0}", auxCoord[0]) + 
-                  " | lat " + String.Format("{0}", auxCoord[1]) + 
-                  " - lon " + String.Format("{0}", clientes[idCli.IndexOf(c)].getId());
+                  " - ID: " + String.Format("{0}", clientes[idCli.IndexOf(c)].getId()) + 
+                  " | lat " + String.Format("{0}", auxCoord[0]) + 
+                  " - lon " + String.Format("{0}", auxCoord[1]);
           Console.WriteLine (inf[1]);
 
           foreach(int e in diarioEntregas[0].getEntregas()){
