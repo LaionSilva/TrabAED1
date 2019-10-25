@@ -53,15 +53,33 @@ namespace logistica {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  PRODUTOS 
-    public void NovoProduto(string tipo, double custo, double peso, double volume) { 
+    public bool NovoProduto(string tipo, double custo, double peso, double volume) { 
       //  Produto(tipo, quantidade, preço por unidade)  
       try{
-        produtos.Add(new Produto(tipo, 0, custo, peso, volume));
-        Salvar();
-      } catch { Console.WriteLine ("Erro: Novo Produto - dis:NPr"); }         
+        bool comprar = true;
+        foreach(Produto p in produtos){
+          if(p.getTipo() == tipo) { comprar = false; }
+        }
+        if(comprar){
+          produtos.Add(new Produto(tipo, 5000, custo, peso, volume));
+          Salvar();
+          return true;
+        }         
+      } catch { Console.WriteLine ("Erro: Novo Produto - dis:NPr"); }  
+      return false;       
     }
 
-    public bool ComprarProduto(string tipo, int n) {
+    private void AbastecerProdutos() {
+      foreach(Produto p in produtos) {
+        if(p.getQuantidade() < 300) {
+          if(!ComprarProduto(p.getTipo(), 1000)) {
+            Console.WriteLine ("Erro: Comprar Produto - dis:NPr | O produto {0} não foi comprado", p.getTipo());
+          }
+        }
+      }
+    }
+
+    private bool ComprarProduto(string tipo, int n) {
       try{
         bool prod = false, renda = false;
         foreach(Produto p in produtos){
@@ -170,6 +188,14 @@ namespace logistica {
         if(nome == clientes[i].getNome()) { return clientes[i].getId(); }
       } return -1;
     }
+
+    public void ListarClientes(){ //  Encontrar o id de algum cliente pelo nome - retorna -1 caso não encontre
+      foreach (Cliente c in clientes){
+        Console.WriteLine("Nome: {0}  |  Id: {1}  |  Lat: {2} |  Lon: {3}", c.getNome(), c.getId(), c.getLat(),c.getLat());
+      }
+    }
+
+
     //  CLIENTES
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

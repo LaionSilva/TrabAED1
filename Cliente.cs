@@ -78,6 +78,8 @@ namespace logistica {
     public int getId() { return id; }
     public string getNome() { return nome; }
     public double[] getCoord() { return coord; }
+    public double getLat(){return coord[0];}
+    public double getLon(){return coord[1];}
     public int getTendencia() { return tendencia; }
     public List<Produto> getPedidos() { return pedidos; }
 

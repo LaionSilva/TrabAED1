@@ -24,16 +24,32 @@ namespace logistica {
         System.Threading.Thread.Sleep(1000);
       Console.Clear();
 
-      Menu(); 
+      bool loop = true;
+      while(loop) {
+        Console.Write("Escolha o setor (O - Operacional | A - Administrativo | EXIT - Sair)\nSetor: ");
+        switch (Console.ReadLine().ToUpper()) { 
+          case "O": MenuPrincipal(); break;
+          case "A": MenuAdministrativo(); break;
+          case "ANONYMUS@RESET": mercado.ResetarFiles(); break;
+          case "EXIT": loop = false; break;
+          default: Console.WriteLine("Escolha uma opção válida!\n"); break;
+        }
+        Console.ReadKey(); 
+      }
+
+      ; 
       Console.ReadKey(); 
     }
 
-    public static void Menu() {
+    public static void MenuPrincipal() {
       bool loop = true;
 
       while(loop) {
         switch (Cabecario()) { 
           case "CC": CadastarCliente(); break;
+          case "CP": CadastarProduto(); break;
+          case "BC": BancoClientes(); break;
+          
           case "OF": OfertarProdutos(); break;
           case "VD": VenderProdutos(); break;
           case "CR": CalcularViagen(); break;
@@ -43,6 +59,24 @@ namespace logistica {
           case "EXIT": loop = false; break;
           default: Console.WriteLine("Escolha uma opção válida!\n"); break;
         }
+        Console.Write("Digite qualquer coisa para continuar... ");
+        Console.ReadKey(); 
+      }
+    }
+
+    public static void MenuAdministrativo() {
+      bool loop = true;
+
+      while(loop) {
+        switch (Cabecario()) { 
+          case "CC": CadastarCliente(); break;
+          case "CP": CadastarProduto(); break;
+          case "BC": BancoClientes(); break;
+          case "ANONYMUS@RESET": mercado.ResetarFiles(); break;
+          case "EXIT": loop = false; break;
+          default: Console.WriteLine("Escolha uma opção válida!\n"); break;
+        }
+        Console.Write("Digite qualquer coisa para continuar... ");
         Console.ReadKey(); 
       }
     }
@@ -54,6 +88,9 @@ namespace logistica {
       
       Console.WriteLine("\nEscolha a operação desejada ou EXIT para sair: (Digite o código)");
       Console.WriteLine("CC - Cadastrar Cliente");
+      Console.WriteLine("CP - Cadastrar Produto");
+      Console.WriteLine("BC - Banco de Dados Clientes");
+
       Console.WriteLine("OF - Ofertar Produtos");
       Console.WriteLine("VD - Vender Produtos");
       //Console.WriteLine("CC01 - Vender ");
@@ -70,10 +107,11 @@ namespace logistica {
 
     public static void CadastarCliente(){
       while(true) {
-        Console.WriteLine("\nInforme o nome do cliente");
+        Console.Write("\nInforme o nome do cliente\nNome: ");
         string nome = Console.ReadLine();
         if(mercado.getClientes(nome) == -1) {
           mercado.NovoCliente(nome);
+          Console.WriteLine("Cliente Cadastrado com Sucesso!");
           break;
         }
         Console.WriteLine("Cliente já posssui cadastro!");
@@ -81,6 +119,31 @@ namespace logistica {
         string asw = Console.ReadLine().ToUpper();
         if(asw == "N") { break; }
       }
+    }
+
+    public static void CadastarProduto(){
+      while(true) {
+        Console.Write("\nInforme o nome do produto\nNome: ");
+        string nome = Console.ReadLine();
+        Console.Write("\nInforme o preço do produto\nValor R$: ");
+        double custo = double.Parse(Console.ReadLine());
+        Console.Write("\nInforme o peso do produto\nKg: ");
+        double peso = double.Parse(Console.ReadLine());
+        Console.Write("\nInforme o volume do produto\nm3: ");
+        double volume = double.Parse(Console.ReadLine());
+        if(mercado.NovoProduto(nome, custo, peso, volume) == true) {
+          Console.WriteLine("Produto Cadastrado com Sucesso!");
+          break;
+        }
+        Console.WriteLine("Produto já posssui cadastro!");
+        Console.Write("Deseja Cadastrar outro Produto?(y/n) "); 
+        string asw = Console.ReadLine().ToUpper();
+        if(asw == "N") { break; }
+      }
+    }
+
+    public static void BancoClientes(){
+      mercado.ListarClientes();
     }
 
     public static void OfertarProdutos(){
