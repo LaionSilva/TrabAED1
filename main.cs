@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 
@@ -11,16 +10,17 @@ namespace logistica {
     private static string fimProcesso = "\n=== 0 == 1 == 0 ==  A N Ô N I M U S   H . L  == 1 == 0 == 1 ===" +
                                         "\n=== 1 == 0 == 1 ==  D E S C O N E C T A D O  == 0 == 1 == 0 ===";
     private static string fachada = 
-      "____________________#________________________________________________________\n" +
-      "__________________##_##______________________________________________________\n" +
-      "__#####__##___##__#####__##___##_##____##_###_____###__#####__##___##_######_\n" + 
-      "_##___##_###__##_##___##_###__##__##__##__##_##_##_##_##___##_##___##_##_____\n" + 
-      "_#######_##_#_##_##___##_##_#_##___####___##__###__##_##___##_##___##_######_\n" + 
-      "_##___##_##__###_##___##_##__###____##____##___#___##_##___##_##___##_____##_\n" + 
-      "_##___##_##___##__#####__##___##____##____##_______##__#####___#####__######_\n";
+      "                    #                                                        \n" +
+      "                  ## ##                                                      \n" +
+      "  #####  ##   ##  #####  ##   ## ##    ## ###     ###  #####  ##   ## ###### \n" + 
+      " ##   ## ###  ## ##   ## ###  ##  ##  ##  ## ## ## ## ##   ## ##   ## ##     \n" + 
+      " ####### ## # ## ##   ## ## # ##   ####   ##  ###  ## ##   ## ##   ## ###### \n" + 
+      " ##   ## ##  ### ##   ## ##  ###    ##    ##   #   ## ##   ## ##   ##     ## \n" + 
+      " ##   ## ##   ##  #####  ##   ##    ##    ##       ##  #####   #####  ###### \n";
 
 
     public static void Main () {
+      //Console.ReadKey(); 
       Distribuidora mercado = new Distribuidora();
 
       Console.Clear();
@@ -58,7 +58,7 @@ namespace logistica {
       //Console.WriteLine("CC01 - Vender ");
       Console.WriteLine("CR - Calcular Rota");
       //Console.WriteLine("EOV1 - Emitir Ordem de viagem");
-      Console.WriteLine("ER - Emitir Relatório de viagem"); 
+      //Console.WriteLine("ER - Emitir Relatório de viagem"); 
       Console.WriteLine("EXIT - Voltar");
       Console.Write("\nCódigo: ");      
       asw = Console.ReadLine().ToUpper();
@@ -77,12 +77,12 @@ namespace logistica {
           case "VD": VenderProdutos(); break;
           case "CR": CalcularViagen(); break;
           //case "EOV1": <comando> ;break;
-          case "ER": GerarRelatório(); break;
+          //case "ER": GerarRelatório(); break;
           case "EXIT": loop = false; break;
           default: Console.WriteLine("\nComando inválido!\n"); break;
         }
         if(comando != "EXIT"){
-          Console.Write("Digite qualquer coisa para continuar... ");
+          Console.Write("\nDigite qualquer coisa para continuar... ");
           Console.ReadKey(); 
         }        
       }
@@ -127,7 +127,7 @@ namespace logistica {
           default: Console.WriteLine("\nEscolha uma opção válida!"); break;
         }
         if(comando != "EXIT"){
-          Console.Write("Digite qualquer coisa para continuar... ");
+          Console.Write("\nDigite qualquer coisa para continuar... ");
           Console.ReadKey(); 
         } 
       }
@@ -152,10 +152,10 @@ namespace logistica {
       mercado.ComoViajar();
     }
 
-    public static void GerarRelatório(){
-      Console.WriteLine("Gerando relatório...");
-      mercado.ImprimirRelatório();
-    }
+   /* public static void GerarRelatório(){
+      Console.WriteLine("\nGerando relatório...");
+      mercado.GerarRelatório();
+    }*/
     //  MÉTODOS OPERACIONAIS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -4,22 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace logistica {
-  public class Save {
-
-    private List<Produto> produtos = new List<Produto>(); 
-    private List<Encomenda> encomendas = new List<Encomenda>();
-    private List<Encomenda> entregas = new List<Encomenda>();
-    private List<Produto> pedidos = new List<Produto>();
-    //private List<Relatorio> diarioEmpresarial = new List<Relatorio>(); 
+  public class Save : Estoque {
     //private List<Caminhao> frota = new List<Caminhao>(); 
-	  private Cliente clientes = new Cliente(); 
-    private List<Cliente> Clientes = new List<Cliente>(); 
-
-    //Endereço dos arquivos salvos
-    private string fileProdutos = "file_produtos.txt";
-    private string fileClientes = "file_clientes.txt";
-    private string fileEncomendas = "file_encomendas.txt";
-    private string fileEntregas = "file_entregas.txt";
+	  private Cliente cli = new Cliente(); 
 
     public Save() { CheckArquivo(); }
 
@@ -31,7 +18,7 @@ namespace logistica {
 
     public List<Cliente> getClientes(){
       Carregar("clientes");
-      return Clientes;
+      return clientes;
     }
 
     public List<Encomenda> getEncomendas(){
@@ -58,7 +45,7 @@ namespace logistica {
         CheckArquivo();
         foreach(Cliente cl in c) {
           coord = cl.getCoord();
-          clientes = new Cliente(cl.getId(), cl.getNome(), coord[0], coord[1], cl.getTendencia());
+          cli = new Cliente(cl.getId(), cl.getNome(), coord[0], coord[1], cl.getTendencia());
           pedidos.Clear();
           pedidos.AddRange(cl.getPedidos());
           Guardar("clientes");
@@ -75,9 +62,15 @@ namespace logistica {
       entregas = e;
       Guardar("entregas");
     }
+
+    public void setRelatorio(DadosLog dados) {
+      System.IO.File.Delete(fileRelatorio);
+      GuardarRelatorio(dados);
+    }
    
 
     private void Carregar(string dado){ //  Get do dados.txt para todas as listas
+    System.Threading.Thread.Sleep(50);
       switch(dado){        
         case "produtos": CarregarProdutos(); break;
         case "clientes": CarregarClientes(); break;
@@ -120,6 +113,8 @@ namespace logistica {
         { using (StreamWriter Salvar = File.AppendText(fileEncomendas)) {} }
       if (!System.IO.File.Exists(fileEntregas))
         { using (StreamWriter Salvar = File.AppendText(fileEntregas)) {} }
+      if (!System.IO.File.Exists(fileRelatorio))
+        { using (StreamWriter Salvar = File.AppendText(fileRelatorio)) {} }
       System.Threading.Thread.Sleep(50);
     }
 
@@ -162,7 +157,7 @@ namespace logistica {
               coord[0] = int.Parse(Carregar.ReadLine());
               coord[1] = int.Parse(Carregar.ReadLine());
               tendencia = int.Parse(Carregar.ReadLine());
-              clientes = new Cliente(id, nome, coord[0], coord[1], tendencia);
+              cli = new Cliente(id, nome, coord[0], coord[1], tendencia);
 
               lendo = Carregar.ReadLine();
               gravar = true;
@@ -179,11 +174,11 @@ namespace logistica {
                 lendo = Carregar.ReadLine();
               }    
               if(pedidos.Count > 0) 
-                { clientes.setPedidos(pedidos); }
-              Clientes.Add( clientes );    
+                { cli.setPedidos(pedidos); }
+              clientes.Add( cli );    
             }
             else if(gravar) 
-              { Clientes.Add( clientes ); }
+              { clientes.Add( cli ); }
 
             gravar = false; 
             //Console.WriteLine(Clientes.Count + lendo); //  TESTE   
@@ -282,13 +277,13 @@ namespace logistica {
     private void GuardarClientes(){
       using (StreamWriter Salvar = File.AppendText(fileClientes)) { 
         double[] coord = new double[2];        
-        coord = clientes.getCoord();
+        coord = cli.getCoord();
         Salvar.WriteLine("--"); 
-        Salvar.WriteLine(clientes.getId()); 
-        Salvar.WriteLine(clientes.getNome()); 
+        Salvar.WriteLine(cli.getId()); 
+        Salvar.WriteLine(cli.getNome()); 
         Salvar.WriteLine(coord[0]); 
         Salvar.WriteLine(coord[1]); 
-        Salvar.WriteLine(clientes.getTendencia()); 
+        Salvar.WriteLine(cli.getTendencia()); 
         foreach(Produto p in pedidos){
           Salvar.WriteLine("-#"); 
           Salvar.WriteLine(p.getTipo()); 
@@ -341,6 +336,17 @@ namespace logistica {
           }
         }
       }
+    }
+
+    private void GuardarRelatorio(DadosLog dados){
+      using (StreamWriter Salvar = File.AppendText(fileRelatorio)) {
+        foreach(string r in dados.relatorio) {
+          Salvar.Write(r); 
+        }
+        foreach(string m in dados.mapa) {
+          Salvar.Write(m); 
+        }
+      }  
     }
 
   }
