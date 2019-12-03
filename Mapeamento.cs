@@ -60,7 +60,7 @@ namespace logistica {
         }        
       } while((ii[0] != -1) && (ii[1] != -1));
       GerarMapa();
-      Relatorio();
+      //Relatorio();
 
       dados.distancia = CalcularDistanciaRota();
       dados.rota = getRota();
@@ -210,7 +210,7 @@ namespace logistica {
     private void Relacionar(){
       double[] coord = new double[2]{0,0};
       double[] coordOr = new double[2]{0,0};
-      Console.WriteLine ("Conectando");
+      Console.WriteLine ("Unindo rotas");
       AtualizarMapa();
 
       foreach(Posicao c in cliCheck) {
@@ -277,13 +277,13 @@ namespace logistica {
             if(cont == 0) { 
               or1 = p.getIdOr();
               de1 = p.getIdDe(); 
-              Console.WriteLine("ponto cruzado: {0} {1} {2} {3} 1", p.getLat(), p.getLon(), p.getIdOr(), p.getIdDe()); 
+              //Console.WriteLine("ponto cruzado: {0} {1} {2} {3} 1", p.getLat(), p.getLon(), p.getIdOr(), p.getIdDe()); 
               cont++; 
             }
             else if(cont == 1) { 
               or2 = p.getIdOr(); 
               de2 = p.getIdDe(); 
-              Console.WriteLine("ponto cruzado: {0} {1} {2} {3} 2", p.getLat(), p.getLon(), p.getIdOr(), p.getIdDe()); 
+              //Console.WriteLine("ponto cruzado: {0} {1} {2} {3} 2", p.getLat(), p.getLon(), p.getIdOr(), p.getIdDe()); 
               memoria.Add(String.Format("{0:0}", p.getLat()) + String.Format("{0:0}", p.getLon()));
               cont++; 
               break;
@@ -458,7 +458,7 @@ namespace logistica {
       } System.Threading.Thread.Sleep(10);
 
       if(id1 != 0 && id2 != 0) { 
-        Console.WriteLine ("Corrigindo Sentidos");
+        //Console.WriteLine ("Corrigindo Sentidos");
         if(s1 && !s2) {
           cliCheck[id1].setIdDe( cliCheck[id2].getId() );
           cliCheck[id2].setIdOr( cliCheck[id1].getId() );
