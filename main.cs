@@ -4,11 +4,16 @@ using System.Collections.Generic;
 namespace logistica {
   class MainClass {
     private static Distribuidora mercado = new Distribuidora();
-    private static string titulo =  "\n=== 0 == 1 == 0 ====  A N Ô N I M U S   H . L  ==== 1 == 0 == 1 ===" +
-                                    "\n=== 1 == 0 == 1 ===  D I S T R I B U I D O R A  === 0 == 1 == 0 ===" +
-                                    "\nCode by: Higor Parnoff | Laion Fernandes - Engenharia de Computação";
-    private static string fimProcesso = "\n=== 0 == 1 == 0 ==  A N Ô N I M U S   H . L  == 1 == 0 == 1 ===" +
-                                        "\n=== 1 == 0 == 1 ==  D E S C O N E C T A D O  == 0 == 1 == 0 ===";
+
+    private static string titulo =  
+    "\n=== 0 == 1 == 0 ====  A N Ô N I M O U S   H . L  ==== 1 == 0 == 1 ===" +
+    "\n=== 1 == 0 == 1 ===   D I S T R I B U I D O R A   === 0 == 1 == 0 ===" +
+    "\nCode by: Higor Parnoff | Laion Fernandes - Engenharia de Computação";
+
+    private static string fimProcesso = 
+    "\n=== 0 == 1 == 0 ====  A N Ô N I M O U S   H . L  ==== 1 == 0 == 1 ===" +
+    "\n=== 1 == 0 == 1 ====   D E S C O N E C T A D O   ==== 0 == 1 == 0 ===";
+
     private static string fachada = 
       "                    #                                                        \n" +
       "                  ## ##                                                      \n" +
@@ -17,7 +22,7 @@ namespace logistica {
       " ####### ## # ## ##   ## ## # ##   ####   ##  ###  ## ##   ## ##   ## ###### \n" + 
       " ##   ## ##  ### ##   ## ##  ###    ##    ##   #   ## ##   ## ##   ##     ## \n" + 
       " ##   ## ##   ##  #####  ##   ##    ##    ##       ##  #####   #####  ###### \n";
-
+      
 
     public static void Main () {
       //Console.ReadKey(); 
@@ -31,14 +36,21 @@ namespace logistica {
 
       bool loop = true;
       while(loop) {
-        Console.WriteLine("\nO - Setor operacional | A - Setor administrativo | EXIT - Desconectar");
+        Console.WriteLine("\nO - Setor operacional | A - Setor administrativo | SAIR - Desconectar");
         Console.Write("\nEscolha o setor desejado... \nSetor: ");
         switch (Console.ReadLine().ToUpper()) { 
           case "O": MenuOperacional(); break;
           case "A": MenuAdministrativo(); break;
-          case "ANONYMUS@RESET": mercado.ResetarFiles(); break;
-          case "EXIT": loop = false; break;
-          default: Console.WriteLine("\nComando inválido!\n"); break;
+          case "ANONYMOUS@RESET": mercado.ResetarFiles(); break;
+          case "SAIR": loop = false; break;
+          default: 
+            Console.Clear();
+            Console.WriteLine (titulo);
+            Console.WriteLine("\nComando inválido!\n"); 
+            Console.ReadKey(); 
+            Console.Clear();
+            Console.WriteLine (titulo);
+            break;
         }
       }
 
@@ -59,7 +71,8 @@ namespace logistica {
       Console.WriteLine("CR - Calcular Rota");
       //Console.WriteLine("EOV1 - Emitir Ordem de viagem");
       //Console.WriteLine("ER - Emitir Relatório de viagem"); 
-      Console.WriteLine("EXIT - Voltar");
+      Console.WriteLine("VOLTAR - Menu inicial");
+      Console.WriteLine("SAIR - Desconectar");
       Console.Write("\nCódigo: ");      
       asw = Console.ReadLine().ToUpper();
       Console.Clear();
@@ -78,10 +91,19 @@ namespace logistica {
           case "CR": CalcularViagen(); break;
           //case "EOV1": <comando> ;break;
           //case "ER": GerarRelatório(); break;
-          case "EXIT": loop = false; break;
-          default: Console.WriteLine("\nComando inválido!\n"); break;
+          case "VOLTAR": loop = false; break;
+          case "SAIR" : 
+            Console.Clear();
+            Console.WriteLine(fimProcesso);
+            Environment.Exit(0); 
+            break;
+          default: 
+            Console.Clear();
+            Console.WriteLine (titulo);
+            Console.WriteLine("\nComando inválido!"); 
+            break;
         }
-        if(comando != "EXIT"){
+        if(comando != "VOLTAR"){
           Console.Write("\nDigite qualquer coisa para continuar... ");
           Console.ReadKey(); 
         }        
@@ -103,7 +125,8 @@ namespace logistica {
       Console.WriteLine("LC - Listar Clientes");
       Console.WriteLine("LP - Listar Produtos");
       Console.WriteLine("CPR - Comprar Produto");
-      Console.WriteLine("EXIT - Voltar");
+      Console.WriteLine("VOLTAR - Menu inicial");
+      Console.WriteLine("SAIR - Desconectar");
       Console.Write("\nCódigo: ");      
       asw = Console.ReadLine();
       asw = asw.ToUpper(); 
@@ -123,10 +146,19 @@ namespace logistica {
           case "LC": BancoClientes(); break;
           case "LP": BancoProdutos(); break;
           case "CPR": ComprarProdutos(); break;
-          case "EXIT": loop = false; break;
-          default: Console.WriteLine("\nEscolha uma opção válida!"); break;
+          case "VOLTAR": loop = false; break;
+          case "SAIR" : 
+            Console.Clear();
+            Console.WriteLine(fimProcesso);
+            Environment.Exit(0); 
+            break;
+          default: 
+            Console.Clear();
+            Console.WriteLine (titulo);
+            Console.WriteLine("\nComando inválido!"); 
+            break;
         }
-        if(comando != "EXIT"){
+        if(comando != "VOLTAR"){
           Console.Write("\nDigite qualquer coisa para continuar... ");
           Console.ReadKey(); 
         } 
@@ -148,14 +180,37 @@ namespace logistica {
       mercado.Vender(); 
     }
 
-    public static void CalcularViagen(){
-      mercado.ComoViajar();
-    }
+    public static void CalcularViagen() {
+      while(true) {
+        Console.Write("\nQuantos containers deseja acoplar ao caminhão?\n>> ");
+          int nCam = int.Parse(Console.ReadLine());
 
-   /* public static void GerarRelatório(){
-      Console.WriteLine("\nGerando relatório...");
-      mercado.GerarRelatório();
-    }*/
+        try{
+          if(nCam > 3) {
+            throw new LogisticaException("LE_Main_LimiteContainers");
+          }
+          else{
+            mercado.ComoViajar();
+            break;
+          }          
+        }
+        catch(LogisticaException) {}
+        catch(FormatException) { 
+          Console.WriteLine("\nValor invalido"); 
+        }
+        catch(Exception e) { 
+          LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Main", "CalcularViagen"); 
+        }
+
+        Console.Write("\nDeseja tentar denovo?(y/n)\n>>  ");         
+        if(Console.ReadLine().ToUpper() == "Y") { 
+          Console.Clear();
+          Console.WriteLine (titulo);
+          CalcularViagen(); 
+        } else { Console.WriteLine("Fim da operação\n");  }
+        break;
+      }
+    }
     //  MÉTODOS OPERACIONAIS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -163,16 +218,34 @@ namespace logistica {
     //  MÉTODOS ADMINISTRATIVOS
     public static void CadastarCliente(){
       while(true) {
-        Console.Write("\nInforme o nome do cliente\nNome: ");
-        string nome = Console.ReadLine();
-        if(mercado.getClientes(nome) == -1) {
-          mercado.NovoCliente(nome);
-          Console.WriteLine("Cliente Cadastrado com Sucesso!\n");
-          break;
+        try {
+          Console.Write("\nInforme o nome do cliente\nNome: ");
+          string nome = Console.ReadLine();
+
+          if(mercado.getClientes(nome) == -1) {
+            if(nome.Length < 5) {
+              throw new LogisticaException("LE_Main_NovoClienteNomeVazio");
+            } 
+            else { 
+              mercado.NovoCliente(nome); 
+              Console.WriteLine("Cliente Cadastrado com Sucesso!\n");
+              break;
+            }
+          }
+          else { throw new LogisticaException("LE_Main_NovoClienteNomeDuplicado"); }
+        } 
+        catch(LogisticaException) {
+          Console.Write("\nDeseja Cadastrar outro cliente? (y/n):\n>> "); 
+          if(Console.ReadLine().ToUpper() == "Y") {
+            Console.Clear();
+            Console.WriteLine (titulo);
+            CadastarCliente(); 
+          } else { Console.WriteLine("Fim da operação\n");  }
+          break; 
         }
-        Console.WriteLine("Cliente já posssui cadastro!");
-        Console.Write("Deseja Cadastrar outro cliente? (y/n): "); 
-        if(Console.ReadLine().ToUpper() == "N") { break; }
+        catch(Exception e) { 
+          LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Main", "CadastarCliente", true); 
+        }
       }
     }
 
@@ -180,23 +253,40 @@ namespace logistica {
       while(true) {
         Console.WriteLine("\nInforme os seguintes dados do novo produto:");
         Console.Write("\nNome: ");
+        
         try{
           string nome = Console.ReadLine();
+          if(nome.Length == 0) {
+            throw new LogisticaException("LE_Main_NovoProdutoNomeVazio");
+          }
           Console.Write("Preço de custo R$: ");
           double custo = double.Parse(Console.ReadLine());
           Console.Write("Peso em Kg: ");
           double peso = double.Parse(Console.ReadLine());
           Console.Write("Volume em metro cúbico: ");
           double volume = double.Parse(Console.ReadLine());
+
           if(mercado.NovoProduto(nome, custo, peso, volume) == true) {
             Console.WriteLine("\nProduto Cadastrado com Sucesso!\n");
             break;
-          }
-          Console.WriteLine("\nProduto já posssui cadastro!");
-        } catch { Console.Write("\nValor invalido detectado"); }    
+          } 
+          else { throw new LogisticaException("LE_Main_NovoProdutoNomeDuplicado"); }
+        }
+        catch(FormatException) { 
+          Console.WriteLine("\nValor invalido detectado"); 
+        }
+        catch(LogisticaException) {}
+        catch(Exception e) { 
+          LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Main", "CadastarProduto", true); 
+        }
 
-        Console.Write("Deseja Cadastrar outro Produto?(y/n) ");         
-        if(Console.ReadLine().ToUpper() == "N") { break; }
+        Console.Write("\nDeseja Cadastrar outro Produto?(y/n)\n>>  ");         
+          if(Console.ReadLine().ToUpper() == "Y") { 
+            Console.Clear();
+            Console.WriteLine (titulo);
+            CadastarProduto(); 
+          } else { Console.WriteLine("Fim da operação\n");  }
+          break;
       }
     }
 
@@ -214,16 +304,31 @@ namespace logistica {
 
     public static void ComprarProdutos(){
       while(true) {
-        Console.WriteLine("\nInforme os seguintes dados:");
-        Console.Write("\nNome: ");
-        string nome = Console.ReadLine();
-        Console.Write("Quantidade: ");
-        try{ 
+        string nome = "";
+
+        try{
+          Console.WriteLine("\nInforme os seguintes dados:");
+          Console.Write("\nNome: ");
+          nome = Console.ReadLine();
+          Console.Write("Quantidade: ");
+          
           int quant = int.Parse(Console.ReadLine()); 
-          mercado.ComprarProduto(nome, quant);
-          break;
+          if(mercado.ComprarProduto(nome, quant)) {}
         }
-        catch{ Console.Write("\nQuantidade não aceita\n"); }
+        catch(FormatException) { 
+          Console.WriteLine("\nQuantidade não aceita\n"); 
+        }
+        catch(Exception e) { 
+          LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Main", "ComprarProdutos"); 
+        }
+
+        Console.Write("\nDeseja continuar comprando?(y/n)\n>>  ");         
+        if(Console.ReadLine().ToUpper() == "Y") { 
+          Console.Clear();
+          Console.WriteLine (titulo);
+          ComprarProdutos(); 
+        } else { Console.WriteLine("Fim da operação\n");  }
+        break; 
       }
     }
     //  MÉTODOS ADMINISTRATIVOS
