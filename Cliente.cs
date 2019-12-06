@@ -10,7 +10,7 @@ namespace logistica {
     private int tendencia; //  chance de comprar 1 a 100
 
     public Cliente(){}
-    public Cliente(int i, string n, double lat, double lon, int t = 50) {
+    public Cliente(int i, string n, double lat, double lon, int t = 20) {
       id = i;
       nome = n;
       coord[0] = lat;
@@ -33,40 +33,57 @@ namespace logistica {
           ));
           return 2;
         }
-      } catch { return 0; }
+      } 
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Cliente", "Ofertar");
+        return 0;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Cliente", "Ofertar");
+        return 0; 
+      }
       return 1;
     }
 
     public List<Produto> Vender(List<Produto> estoque) { //  Retorna o Encomenda.pacote
       List<Produto> pacote = new List<Produto>();
-      if(checkPedidos()) {
-        bool venda = false;
-        foreach(Produto e in estoque) { //  Validar os pedidos pelo estoque da Distribuidora
-          bool run;
-          do{
-            run = false;
-            for(int i = 0; i < pedidos.Count; i++) { //  Registrar pedidos
-              if((pedidos[i].getTipo() == e.getTipo()) && (pedidos[i].getQuantidade() <= e.getQuantidade())) {
-                pacote.Add( new Produto(
-                  pedidos[i].getTipo(), 
-                  pedidos[i].getQuantidade(), 
-                  pedidos[i].getCusto(),
-                  pedidos[i].getPeso(),
-                  pedidos[i].getVolume()
-                ) );
-                e.downQuant( pedidos[i].getQuantidade() );
-                pedidos.RemoveAt(i);
-                i--;
-                run = true;
-                venda = true;
-              } 
-              else if(pedidos[i].getTipo() == e.getTipo()) 
-                { Console.WriteLine("Produto não encontrado ou em falta ao vender: {0} - {1} - cli-ven", e.getTipo(), e.getQuantidade()); }
-            }
-          } while(run);
+      bool venda = false, run;
+
+      try {
+        if(checkPedidos()) {        
+          foreach(Produto e in estoque) { //  Validar os pedidos pelo estoque da Distribuidora
+            do{
+              run = false;
+              for(int i = 0; i < pedidos.Count; i++) { //  Registrar pedidos
+                if((pedidos[i].getTipo() == e.getTipo()) && (pedidos[i].getQuantidade() <= e.getQuantidade())) {
+                  pacote.Add( new Produto(
+                    pedidos[i].getTipo(), 
+                    pedidos[i].getQuantidade(), 
+                    pedidos[i].getCusto(),
+                    pedidos[i].getPeso(),
+                    pedidos[i].getVolume()
+                  ) );
+                  e.downQuant( pedidos[i].getQuantidade() );
+                  pedidos.RemoveAt(i);
+                  i--;
+                  run = true;
+                  venda = true;
+                } 
+                else if(pedidos[i].getTipo() == e.getTipo()) 
+                  { Console.WriteLine("Produto não encontrado ou em falta ao vender: {0} - {1} - cli-ven", e.getTipo(), e.getQuantidade()); }
+              }
+            } while(run);
+          }
+          if(venda) { Console.WriteLine("Pedido aceito. Cliente: {0}", nome); }
         }
-        if(venda) { Console.WriteLine("Pedido aceito. Cliente: {0}", nome); }
       }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Cliente", "Vender");
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Cliente", "Vender");
+      }
+
       return pacote;
     }
 
