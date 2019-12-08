@@ -6,7 +6,7 @@ namespace logistica {
     private static double precoDiesel = 3.75;
     private static double coefDiariaMotorista = 150/1000;
     public const double eficMotor = 10; //  (Km/L) / peso[Kg] 
-    public const double volumeBau = 3000; //  (m^3) capacidade máx
+    public const double volumeBau = 600; //  (m^3) capacidade máx
     public const double pesoBau = 10000; //  10mil kg capacidade máx
 
     public static double CalcularDiariaMotorista(double distanciaTotal) {
@@ -25,6 +25,12 @@ namespace logistica {
       double y2 = lon2*111.12 * ( (50 - Math.Sqrt( Math.Pow(lat2, 2) )) / 50 );
 
       return Math.Sqrt( Math.Pow(x1 - y1, 2) + Math.Pow(x2 - y2, 2));
+    }
+    public static double volumePercent(double volume, int containers) {
+      return (volume * 100) / (Caminhao.volumeBau * containers);
+    }
+    public static double pesoPercent(double peso, int containers) {
+      return (peso * 100) / (Caminhao.pesoBau * containers);
     }
   }
 }
