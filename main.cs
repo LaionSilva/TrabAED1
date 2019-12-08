@@ -183,14 +183,13 @@ namespace logistica {
     public static void CalcularViagen() {
       while(true) {
         Console.Write("\nQuantos containers deseja acoplar ao caminhão?\n>> ");
-          int nCam = int.Parse(Console.ReadLine());
-
         try{
-          if(nCam > 3) {
+          int containers = int.Parse(Console.ReadLine());
+          if(containers > 3) {
             throw new LogisticaException("LE_Main_LimiteContainers");
           }
           else{
-            mercado.ComoViajar();
+            mercado.ComoViajar(containers);
             break;
           }          
         }
