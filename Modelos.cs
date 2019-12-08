@@ -9,18 +9,19 @@ namespace logistica {
     protected List<Produto> pedidos = new List<Produto>();
     protected List<Encomenda> encomendas = new List<Encomenda>();
     protected List<Encomenda> entregas = new List<Encomenda>();
-    protected List<Relatorio> diarioEntregas = new List<Relatorio>(); 
-	  protected List<Cliente> clientes = new List<Cliente>();
+	  protected List<Cliente> clientes = new List<Cliente>(); 
 
-    //  Endereço dos locais de estocagem
+    //  Endereços dos locais de estocagem - Usados principalmente na classe Save
     protected string fileProdutos = "file_produtos.txt";
     protected string fileClientes = "file_clientes.txt";
     protected string fileEncomendas = "file_encomendas.txt";
     protected string fileEntregas = "file_entregas.txt";
     protected string fileRelatorio = "Relatorio.txt";
+    protected string fileSenhas = "file_senhas.txt";
+    protected string fileLogException = "file_logException";
   }
 
-  public class Etiqueta { //  Pai de Classes Modelo
+  public class Etiqueta { //  Pai de Classes Modelo - usado nos objetos que manipulam mercadorias do estoque até a entrega
     protected int id;
     protected double preco;
     protected double custo;
@@ -37,7 +38,7 @@ namespace logistica {
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  public class Produto : Etiqueta {
+  public class Produto : Etiqueta { //  Mercadoria que ainda não foi vendida
     private string tipo;
     private int quantidade;
 
@@ -57,15 +58,17 @@ namespace logistica {
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  public class Encomenda : Etiqueta { //  FIXO
-    private List<Produto> pacote = new List<Produto>();
+  public class Encomenda : Etiqueta { //  Conjunto de mercadorias que já foram vendidas a um único cliente e que ainda não foi despachada para a entrega
+    private List<Produto> pacote;
     private int cliente; //  id do cliente
     private double frete;
-    private int prazo; //  dias
-    private string dataCompra;
+    private int prazo; //  dias - ##fora de uso no momento##
+    private string dataCompra; //  ##fora de uso no momento##
     private bool statuaEntrega;
 
     public Encomenda(int i, List<Produto> p, int c, double cl, double f = 0, int pr = 0, string dc = "@", bool s = false) {
+      pacote = new List<Produto>();
+
       id = i;
       pacote = p;
       cliente = c;
@@ -73,10 +76,10 @@ namespace logistica {
       prazo = pr; 
       statuaEntrega = s;
 
-      double valor = 0;
-      foreach(Produto pac in p) {
-        valor += pac.getCusto() * pac.getQuantidade() * (1 + cl);
-      }
+      double valor = 0; //  Calcular somatório dos preços de todos os produtos
+        foreach(Produto pac in p) {
+          valor += pac.getCusto() * pac.getQuantidade() * (1 + cl);
+        }
       preco = valor;
       
       if(dc == "@") { 
@@ -84,19 +87,19 @@ namespace logistica {
       } else { dataCompra = dc; }     
     }
 
-    public double getPesoEnc() { 
+    public double getPesoEnc() { //  Calcular somatório dos pesos de todos os produtos
       double pesoEnc = 0;
-      foreach(Produto pac in pacote) { 
-        pesoEnc += pac.getPeso() * pac.getQuantidade(); 
-      }
+        foreach(Produto pac in pacote) { 
+          pesoEnc += pac.getPeso() * pac.getQuantidade(); 
+        }
       return pesoEnc + frete; 
     }
 
-    public double getVolumeEnc() { 
+    public double getVolumeEnc() { //  Calcular somatório dos volumes de todos os produtos
       double volumeEnc = 0;
-      foreach(Produto pac in pacote) { 
-        volumeEnc += pac.getVolume() * pac.getQuantidade(); 
-      }
+        foreach(Produto pac in pacote) { 
+          volumeEnc += pac.getVolume() * pac.getQuantidade(); 
+        }
       return volumeEnc; 
     }
    
@@ -111,13 +114,12 @@ namespace logistica {
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  public class Relatorio : Etiqueta {
+  public class Relatorio : Etiqueta { //  Guardar na memória todos os dados de todas as entrega para, posteriormente, gerar um relatório final de entrega
     private List<int> clientes = new List<int>();
     private List<int> entregas = new List<int>();
     private double distancia;
 
-    public Relatorio(int i, List<int> c, List<int> e, double d = 0, double v = 0, double l = 0){
-      id = i;
+    public Relatorio(List<int> c, List<int> e, double d = 0, double v = 0, double l = 0){
       clientes = c;
       entregas = e;
       distancia = d;
@@ -131,14 +133,28 @@ namespace logistica {
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  public class DadosLog {
+  public class DadosLog { //  Dados de mapeamento usados na composição do relatório - Principal uso: classe Mapeamento ==> classe Distribuidora
     public int[] rota;
     public double distancia;
     public double custo;
     public double lucro;
+    public double peso;
+    public double volume;
+    public int containers;
     public List<Cliente> cliOrdem;
     public List<string> relatorio;
+    public List<string> relatorioWeb;
     public List<string> mapa;
+  }
+
+  public class DadosLogException { //  Dados para geração de logs de erro
+    public string tipo;
+    public string classe;
+    public string metodo;
+    public string data;
+    public Exception mensagem;
+    public string nota = "";
+    public string notaAdm = "";
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -180,7 +196,7 @@ namespace logistica {
     }
 
     public int getId() { return id; }
-    public double getDist(double la,double lo) { return Distribuidora.CalcularDistancia(lat, lon, la, lo); }
+    public double getDist(double la,double lo) { return Caminhao.CalcularDistancia(lat, lon, la, lo); }
     public bool getConfig() { return config; }
 
     public void setId(int i) { id = i; }
