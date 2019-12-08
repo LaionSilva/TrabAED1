@@ -163,17 +163,19 @@ namespace logistica {
     }
 
     public void Ofertar() { //  Oferecer ao cliente os produtos, há operações randomicas envolvidas
-      bool compra = false;
+      bool compra = false, sucesso = false;
       int oferta = 0;
 
       try{
         foreach(Cliente c in clientes) {
           oferta = c.Ofertar(produtos);
+          compra = false;
           if(oferta == 0) { 
             Console.WriteLine("Erro ao ofertar produtos: dis-ofe"); 
           }
           else if (oferta == 2) { 
             compra = true; 
+            sucesso = true;
           }
           if(compra) { 
             Console.WriteLine("Cliente {0} comprou", c.getNome()); 
@@ -184,7 +186,7 @@ namespace logistica {
         LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Distribuidora", "Ofertar"); 
       }  
 
-      if(compra) { 
+      if(sucesso) { 
         Salvar();
         Console.WriteLine("Pedidos anotados!\n");
       } else { Console.WriteLine("Não houve novos pedidos\n"); }
@@ -216,7 +218,7 @@ namespace logistica {
           }
         }
         if(venda) { 
-          OrganizarEncomendas(); //  Otimizar encomendas, organizando em ordem decrescente por lucratividade
+          //OrganizarEncomendas(); //  Otimizar encomendas, organizando em ordem decrescente por lucratividade
           Salvar();
           Console.WriteLine("Pedidos aceitos!\nEncomendas geradas!\n");
         } else { Console.WriteLine("Não há pedidos pendentes\n"); }
@@ -280,7 +282,7 @@ namespace logistica {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  LOGÍSTICA
-    public void ComoViajar(int nCaminhoes = 1) {
+    public void ComoViajar(int containers) {
       DadosLog dados = new DadosLog(); 
       Mapeamento mapa = new Mapeamento();
       List<Cliente> osClientes = new List<Cliente>(); //  Lista com os Clientes atendidos
@@ -294,10 +296,11 @@ namespace logistica {
 
       Salvar();
       Carregar();
+
       try {
         if(!erro){
           foreach(Encomenda e in encomendas) {
-            if((e.getVolumeEnc() < (Caminhao.volumeBau * nCaminhoes) - volumeTot) && (e.getPesoEnc() < (Caminhao.pesoBau * nCaminhoes) - pesoTot)){
+            if((e.getVolumeEnc() < ((Caminhao.volumeBau * containers) - volumeTot)) && (e.getPesoEnc() < ((Caminhao.pesoBau * containers) - pesoTot))){
               volumeTot += e.getVolumeEnc();
               pesoTot += e.getPesoEnc();
               foreach(Cliente c in clientes) {
@@ -350,8 +353,11 @@ namespace logistica {
             if(!statusMapeamento) {
               throw new LogisticaException("LE_Main_ErroMapeamento");
             }
-            dados.custo = (dados.distancia / (Caminhao.eficMotor * (1 - nCaminhoes / 10))) * 3.686 + Caminhao.CalcularDiariaMotorista(dados.distancia); //  preço do diesel 3,686
+            dados.custo = (dados.distancia / (Caminhao.eficMotor * (1 - dados.containers / 10))) * 3.686 + Caminhao.CalcularDiariaMotorista(dados.distancia); //  preço do diesel 3,686
             dados.lucro = precoTotal - dados.custo;//dados.custo - (dados.custo/1.4);
+            dados.containers = containers;
+            dados.peso = pesoTot;
+            dados.volume = volumeTot;
             Salvar();
             
             NovoRelatorioEntrega(dados, osClientes);
@@ -509,7 +515,25 @@ namespace logistica {
             }
             memoria[1] = c;
           }
-          impressao.Add( "\n\nDistância: " );
+          impressao.Add( "\n\nPeso Total: " );
+          impressaoWeb.Add( "<br/><br/>Peso Total: " );
+          impressao.Add( String.Format("{0:0.00}", dados.peso) );
+          impressaoWeb.Add( String.Format("{0:0.00}", dados.peso) );
+          impressao.Add( " kg  | " );
+          impressaoWeb.Add( " kg  | " );
+          impressao.Add( String.Format("{0:0.00}", Caminhao.pesoPercent(dados.peso, dados.containers)) );
+          impressaoWeb.Add( String.Format("{0:0.00}", Caminhao.pesoPercent(dados.peso, dados.containers)) );
+
+          impressao.Add( "%\nVolume Total: " );
+          impressaoWeb.Add( "<br/><br/>Volume Total: " );
+          impressao.Add( String.Format("{0:0.00}", dados.volume) );
+          impressaoWeb.Add( String.Format("{0:0.00}", dados.volume) );
+          impressao.Add( " m^3  | " );
+          impressaoWeb.Add( " m^3  | " );
+          impressao.Add( String.Format("{0:0.00}", Caminhao.volumePercent(dados.volume, dados.containers)) );
+          impressaoWeb.Add( String.Format("{0:0.00}", Caminhao.volumePercent(dados.volume, dados.containers)) );
+
+          impressao.Add( "%\nDistância: " );
           impressaoWeb.Add( "<br/><br/>Distância: " );
           impressao.Add( String.Format("{0:0.00}", diarioEntregas.getDistancia()) );
           impressaoWeb.Add( String.Format("{0:0.00}", diarioEntregas.getDistancia()) );
