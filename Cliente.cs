@@ -19,11 +19,14 @@ namespace logistica {
     }
 
     public int Ofertar(List<Produto> estoque) { //  Oferecer produtos ao cliente, podendo ele comprar ou não. Add in pedidos
+      int valorRam = 0, index, quant;
       try{
         Random rand = new Random();
-        if ((rand.Next(1,100) <= tendencia) && (estoque.Count > 0)) {
-          int index = rand.Next(0, estoque.Count);
-          int quant = rand.Next(1, 50);
+        System.Threading.Thread.Sleep(50);
+        valorRam = (rand.Next(1,100)); 
+        if ((valorRam <= tendencia) && (estoque.Count > 0)) {
+          index = valorRam % estoque.Count;
+          quant = valorRam % 50;
           pedidos.Add(new Produto(
             estoque[index].getTipo(), 
             quant, 

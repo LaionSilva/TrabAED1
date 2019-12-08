@@ -48,15 +48,51 @@ namespace logistica {
       }
 
       AtualizarMapa(true);
-      Combinar(coordIn);
-      Relacionar();
+
+      try { Combinar(coordIn); }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "Combinar");
+        Distribuidora.statusMapeamento = false;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "Combinar");
+        Distribuidora.statusMapeamento = false;
+      } 
+
+      try { Relacionar(); }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "Combinar");
+        Distribuidora.statusMapeamento = false;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "Combinar");
+        Distribuidora.statusMapeamento = false;
+      }
       
       do { 
         ii = Mapa();
         if((ii[0] != -1) && (ii[1] != -1)) { 
           if( !CheckPontos(ii[0], ii[1]) )  { break; } 
-          Ajustar();
-          CorrigirSentido(); 
+
+          try { Ajustar(); }
+          catch(IndexOutOfRangeException e) {
+            LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "Ajustar");
+            Distribuidora.statusMapeamento = false;
+          }
+          catch(Exception e) { 
+            LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "Ajustar");
+            Distribuidora.statusMapeamento = false;
+          }
+
+          try { CorrigirSentido(); }
+          catch(IndexOutOfRangeException e) {
+            LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "Ajustar");
+            Distribuidora.statusMapeamento = false;
+          }
+          catch(Exception e) { 
+            LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "Ajustar");
+            Distribuidora.statusMapeamento = false;
+          }
         }        
       } while((ii[0] != -1) && (ii[1] != -1));
       GerarMapa();
@@ -70,18 +106,28 @@ namespace logistica {
 
 
     private void AtualizarMapa(bool sentido = false) {
-      if(sentido)
-        for(int i = 0; i < maxLat * 2; i++) {
-          for(int j = 0; j < maxLon * 2; j++) {
-            mapa2[i, j] = mapa[i, j];
+      try {
+        if(sentido)
+          for(int i = 0; i < maxLat * 2; i++) {
+            for(int j = 0; j < maxLon * 2; j++) {
+              mapa2[i, j] = mapa[i, j];
+            }
           }
-        }
-      else 
-        for(int i = 0; i < maxLat * 2; i++) {
-          for(int j = 0; j < maxLon * 2; j++) {
-            mapa[i, j] = mapa2[i, j];
+        else 
+          for(int i = 0; i < maxLat * 2; i++) {
+            for(int j = 0; j < maxLon * 2; j++) {
+              mapa[i, j] = mapa2[i, j];
+            }
           }
-        }
+      }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "AtualizarMapa");
+        Distribuidora.statusMapeamento = false;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "AtualizarMapa");
+        Distribuidora.statusMapeamento = false;
+      } 
     }
 
 
@@ -90,9 +136,19 @@ namespace logistica {
       int auxIndex = 0;
 
       AtualizarCliId();
-      foreach(Posicao c in cliCheck) {
-        auxIndex = cliId.IndexOf(c.getIdDe());
-        dist += c.getDist( cliCheck[auxIndex].getLat(), cliCheck[auxIndex].getLon() );
+      try {
+        foreach(Posicao c in cliCheck) {
+          auxIndex = cliId.IndexOf(c.getIdDe());
+          dist += c.getDist( cliCheck[auxIndex].getLat(), cliCheck[auxIndex].getLon() );
+        }
+      }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "CalcularDistanciaRota");
+        Distribuidora.statusMapeamento = false;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "CalcularDistanciaRota");
+        Distribuidora.statusMapeamento = false;
       }
 
       return dist;
@@ -106,14 +162,25 @@ namespace logistica {
 
       AtualizarCliId();
       
-      while(true) {
-        alvoAt = cliCheck[alvoAt].getIdDe();
-        if(cliId.IndexOf(alvoAt) != origem) {
-          rota[i] = alvoAt - 1;
-        } else { break; }        
-        alvoAt = cliId.IndexOf(alvoAt);
-        i++;
+      try {
+        while(true) {
+          alvoAt = cliCheck[alvoAt].getIdDe();
+          if(cliId.IndexOf(alvoAt) != origem) {
+            rota[i] = alvoAt - 1;
+          } else { break; }        
+          alvoAt = cliId.IndexOf(alvoAt);
+          i++;
+        }
       }
+      catch(IndexOutOfRangeException e) {
+        LogisticaException.ExceptionGrave("LE_IndexOutOfRangeException", e, "Mapeamento", "getRota");
+        Distribuidora.statusMapeamento = false;
+      }
+      catch(Exception e) { 
+        LogisticaException.ExceptionGrave("LE_ExceptionNaoTratada", e, "Mapeamento", "getRota");
+        Distribuidora.statusMapeamento = false;
+      }
+      
       return rota;
     }
 
@@ -122,7 +189,7 @@ namespace logistica {
       cliId.Clear();
       foreach(Posicao c in cliCheck){
         cliId.Add(c.getId());
-      } System.Threading.Thread.Sleep(10);
+      }
     }
 
 
@@ -262,7 +329,6 @@ namespace logistica {
           else { mapaRel.Add(String.Format("{0:0}", mapa[i,j]) ); }
         }
         mapaRel.Add("\n");
-        System.Threading.Thread.Sleep(5);
       }    
       dados.mapa = mapaRel;
     }
@@ -455,7 +521,7 @@ namespace logistica {
         else if((c.getIdDe() == c.getId()) && id1 != 0 && id2 == 0) {
           id2 = c.getId(); s2 = true;
         }
-      } System.Threading.Thread.Sleep(10);
+      } 
 
       if(id1 != 0 && id2 != 0) { 
         //Console.WriteLine ("Corrigindo Sentidos");

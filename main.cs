@@ -1,6 +1,35 @@
 using System;
 using System.Collections.Generic;
 
+/*
+Projeto 2: guia de exigencias e suas localizações:
+
+*Classes adicionais:
+  Caminhao/Caminhao()
+  Logs/LogisticaException()
+  Mapeamento/Mapeamento()
+  EMail/EMail()
+
+*Classes com herança:
+  Classes pai:
+    Modelos/Etiqueta()
+    Modelos/Estoque()
+    Modelos/Ponto()
+  Classes filhas:
+    Modelos/Produto()
+    Modelos/Encomenda()
+    Modelos/Relatorio()
+    Modelos/Posicao()
+
+*Uso de métodos static
+  Caminhao/Caminhao()
+  Logs/LogisticaException()/ExceptionGrave()
+
+*Uso de try, catch e throw
+  Logs/LogisticaException()
+  Todas as classes possuem um desses tratamentos de erro
+*/
+
 namespace logistica {
   class MainClass {
     private static Distribuidora mercado = new Distribuidora();

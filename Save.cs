@@ -12,34 +12,40 @@ namespace logistica {
 
     //GETs do Estoque
     public List<Produto> getProdutos() {
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       CarregarProdutos();
       return produtos;
     }
 
     public List<Cliente> getClientes() {
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       CarregarClientes();
       return clientes;
     }
 
     public List<Encomenda> getEncomendas() {
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       CarregarEncomendas();
       return encomendas;
     }
 
     public List<Encomenda> getEntregas() {
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       CarregarEntregas();
       return entregas;
+    }
+
+     public string getSenhas() {
+      System.Threading.Thread.Sleep(5);
+      return CarregarSenhas();
     }
     
 
     //SETs do Estoque
     public void setProdutos(List<Produto> p) {
+      System.IO.File.Delete(fileProdutos);
       produtos = p;
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       GuardarProdutos();
     }
 
@@ -48,7 +54,7 @@ namespace logistica {
       if(c.Count > 0){
         System.IO.File.Delete(fileClientes);
         CheckArquivo();
-        System.Threading.Thread.Sleep(10);
+        System.Threading.Thread.Sleep(5);
         try {
           foreach(Cliente cl in c) {
             coord = cl.getCoord();
@@ -66,31 +72,33 @@ namespace logistica {
     }    
 
     public void setEncomendas(List<Encomenda> e) {
+      System.IO.File.Delete(fileEncomendas);
       encomendas = e;
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       GuardarEncomendas();
     }
 
     public void setEntregas(List<Encomenda> e) {
+      System.IO.File.Delete(fileEntregas);
       entregas = e;
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       GuardarEntregas();
     }
 
     public void setRelatorio(DadosLog dados) {
       System.IO.File.Delete(fileRelatorio);
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       GuardarRelatorio(dados);
     }
 
     public void setLogException(DadosLogException e) {
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       GuardarLogException(e);
     }
 
     public void Reset() { //  Apagar todos os dados de todos os arquivos de armazenamento
       try {
-        System.Threading.Thread.Sleep(10);
+        System.Threading.Thread.Sleep(5);
         System.IO.File.Delete(fileProdutos);
         System.IO.File.Delete(fileEncomendas);
         System.IO.File.Delete(fileEntregas);
@@ -99,13 +107,13 @@ namespace logistica {
         CheckArquivo();
         Console.WriteLine("\nDados salvos apagados\n");
       } 
-      catch(FileNotFoundException e) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
       catch (Exception e) {
         LogisticaException.ExceptionGrave("LE_Save", e, "Save", "Reset");
       }
       finally {
         CheckArquivo();
-        System.Threading.Thread.Sleep(10);
+        System.Threading.Thread.Sleep(5);
         System.IO.File.Delete(fileProdutos);
         System.IO.File.Delete(fileEncomendas);
         System.IO.File.Delete(fileEntregas);
@@ -116,9 +124,9 @@ namespace logistica {
       }
     }
 
-    private void CheckArquivo(){ //  Verifica a existencia de um arquivo.txt, caso não exista é criado um
+    private void CheckArquivo() { //  Verifica a existencia de um arquivo.txt, caso não exista é criado um
       int posicao = 1;
-      System.Threading.Thread.Sleep(10);
+      System.Threading.Thread.Sleep(5);
       if (!System.IO.File.Exists(fileProdutos))
         { using (StreamWriter Salvar = File.AppendText(fileProdutos)) {} posicao++; }
       if (!System.IO.File.Exists(fileClientes))
@@ -129,7 +137,9 @@ namespace logistica {
         { using (StreamWriter Salvar = File.AppendText(fileEntregas)) {} posicao++; }
       if (!System.IO.File.Exists(fileRelatorio))
         { using (StreamWriter Salvar = File.AppendText(fileRelatorio)) {} posicao++; }
-      System.Threading.Thread.Sleep(10);
+      if (!System.IO.File.Exists(fileSenhas))
+        { using (StreamWriter Salvar = File.AppendText(fileSenhas)) {} posicao++; }
+      System.Threading.Thread.Sleep(5);
     }
 
 
@@ -154,7 +164,7 @@ namespace logistica {
           }
         }
       }
-      catch(FileNotFoundException e) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
       catch (Exception e) {
         LogisticaException.ExceptionGrave("LE_Save", e, "Save", "CarregarProdutos");
       }
@@ -207,7 +217,7 @@ namespace logistica {
           }
         }
       }
-      catch(FileNotFoundException e) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
       catch (Exception e) {
         LogisticaException.ExceptionGrave("LE_Save", e, "Save", "CarregarClientes");
       }
@@ -249,7 +259,7 @@ namespace logistica {
           }
         }
       }
-      catch(FileNotFoundException e) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
       catch (Exception e) {
         LogisticaException.ExceptionGrave("LE_Save", e, "Save", "CarregarEncomendas");
       }
@@ -291,10 +301,29 @@ namespace logistica {
           }
         }
       }
-      catch(FileNotFoundException e) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
       catch (Exception e) {
         LogisticaException.ExceptionGrave("LE_Save", e, "Save", "CarregarEntregas");
       }
+    }
+
+    private string CarregarSenhas(){
+      string senha = "";
+      try {
+        using(Stream FileIn = File.Open(fileSenhas, FileMode.Open)){
+          using(StreamReader Carregar = new StreamReader(FileIn)){
+            senha = Carregar.ReadLine();
+          }
+        }
+      }
+      catch(NullReferenceException) { LogisticaException.ExceptionGrave("LE_Save_SenhaNaoEncontrada"); }
+      catch(LogisticaException) {} 
+      catch(FileNotFoundException) {} //  Nada a ser feito, o fluxo de dados se corrigirá sozinho 
+      catch (Exception e) {
+        LogisticaException.ExceptionGrave("LE_Save", e, "Save", "CarregarProdutos");
+      }
+
+      return senha;
     }
 
 
